@@ -1,0 +1,16 @@
+
+funcion suma(x, b)
+retorno (x + b);
+end funcion
+
+funcion multiplicacion(y,z)
+retorno (y*z);
+end funcion
+
+log (suma(2, 3));
+
+
+
+
+
+
