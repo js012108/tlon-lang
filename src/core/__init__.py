@@ -7,4 +7,3 @@ from .TLONParser import *
 from .TLONVisitor import *
 
 from .Visitor import *
-from .NewVisitor import *

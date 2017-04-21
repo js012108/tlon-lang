@@ -20,7 +20,7 @@ class Visitor(TLONVisitor):
         self.memory_manager = memory_manager
 
     def visitAssignment(self, ctx):
-        name = ctx.variable()
+        name = ctx.variable().getText()
         value = self.visit(ctx.expr())
 
         self.memory_manager.assign(name, value)

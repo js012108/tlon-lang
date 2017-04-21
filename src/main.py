@@ -1,8 +1,10 @@
 import sys
 from core import *
+from antlr4 import *
 
 
 def main():
+  print ('LangTLON v1.0')
   memory = TLONGlobalMemory__()
   file_param = False
   input_stream = None
