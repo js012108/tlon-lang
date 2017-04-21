@@ -99,3 +99,4 @@ ENV/
 # Custom ignores
 **/__pycache__
 **/*.pyc
+**/.idea
