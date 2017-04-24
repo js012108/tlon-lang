@@ -1,16 +1,36 @@
+funcion factorial(numero)
+ if (numero == 0) {
+ 	retorno (1);
+ }
 
-funcion suma(x, b)
-retorno (x + b);
+ retorno (numero * factorial(numero - 1));
 end funcion
 
-funcion multiplicacion(y,z)
-retorno (y*z);
+
+log("prueba de recursividad");
+log(factorial(4));
+
+
+funcion hola(nombre)
+log ("Hola " + nombre + " :D");
 end funcion
 
-log (suma(2, 3));
+funcion llamar(func, params)
+func(params);
+end funcion
 
+llamar(hola, "Joaquin");
 
+importar core.util.file_manager
 
+a = FileManager("test/write.txt");
 
+a.put("Prueba 1");
+
+archivo = FileManager("test/write.txt");
+
+archivo.put("AdiosMundo\n");
+archivo.put("Esto es final...\n");
+archivo.close();
 
 

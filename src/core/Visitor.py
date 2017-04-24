@@ -1,7 +1,6 @@
 import sys
 import math
 from inspect import signature, _empty, isbuiltin
-from types import *
 from importlib import import_module
 
 from .TLONParser import TLONParser
@@ -9,7 +8,7 @@ from .TLONVisitor import TLONVisitor
 
 from .structures import *
 
-sys.setrecursionlimit(10000000)
+sys.setrecursionlimit(100000)
 
 
 class Visitor(TLONVisitor):
@@ -35,13 +34,16 @@ class Visitor(TLONVisitor):
 
         for name, attribute in mod.__dict__.items():
             if not name.startswith('__'):
-                var = TLONVariable__(name, 'default', attribute)
+                var = TLONVariable__(name, attribute, 'default')
                 global_mem.assign(name, var)
 
         return None
 
-    def visitTLONVariable__(self, ctx):
+    def visitVariable(self, ctx):
         name = ctx.ID()
+
+        name = '.'.join(list(map(lambda x: x.getText(), name)))
+
         item = self.memory_manager.find(name)
 
         if item.kind == 'default':
@@ -121,7 +123,8 @@ class Visitor(TLONVisitor):
 
     def visitLog(self, ctx):
         variable = self.visit(ctx.expr())
-        if type(variable) is Variable:
+
+        if isinstance(variable, TLONVariable__):
             print(variable.value)
         else:
             print(variable)
@@ -140,16 +143,16 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         return math.pow(left, right)
 
     def visitUnaryMinusExpr(self, ctx):
         data = self.visit(ctx.expr())
-        if data.__class__ is Variable:
+        if isinstance(data, TLONVariable__):
             data = data.value
         return -data
 
@@ -157,9 +160,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         if ctx.op.type == TLONParser.MULT:
@@ -180,9 +183,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         if ctx.op.type == TLONParser.PLUS:
@@ -194,9 +197,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         if ctx.op.type == TLONParser.LT:
@@ -212,9 +215,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         if ctx.op.type == TLONParser.EQ:
@@ -226,9 +229,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         return left and right
@@ -237,9 +240,9 @@ class Visitor(TLONVisitor):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
 
-        if left.__class__ is Variable:
+        if isinstance(left, TLONVariable__):
             left = left.value
-        if right.__class__ is Variable:
+        if isinstance(right, TLONVariable__):
             right = right.value
 
         return left or right
@@ -247,7 +250,7 @@ class Visitor(TLONVisitor):
     def visitNotExpr(self, ctx):
         value = self.visit(ctx.expr())
 
-        if value.__class__ is Variable:
+        if isinstance(value, TLONVariable__):
             value = value.value
 
         return not value
@@ -292,7 +295,7 @@ class Visitor(TLONVisitor):
         items = self.visit(ctx.expr())
         var = str(ctx.ID())
 
-        if (self.memory_manager.exists(var)):
+        if self.memory_manager.find(var) is not None:
             raise Exception("Error: Can\'t use variable " + var + " already assigned.")
 
         if type(items) is list:
@@ -368,7 +371,7 @@ class Visitor(TLONVisitor):
         for param in ctx.parametro():
             param_name = str(param.ID())
 
-            if self.memory_manager.exists(param_name):
+            if self.memory_manager.find(param_name) is not None:
                 raise Exception('Can\'t assign variable as parameter of function')
 
             if (opcionales and param.ASSIGN() is None):
@@ -387,7 +390,7 @@ class Visitor(TLONVisitor):
 
         local_memory = self.memory_manager.peek_memory()
 
-        funcion = TLONVariable__(name, kind, value, parameters)
+        funcion = TLONVariable__(name, value, kind, parameters)
         local_memory.assign(name, funcion)
 
         return None
@@ -408,7 +411,7 @@ class Visitor(TLONVisitor):
         name = str(ctx.ID())
         value = self.visit(ctx.expr())
 
-        obj = TLONVariable__(name, 'any', value)
+        obj = TLONVariable__(name, value, 'any')
 
         return obj
 

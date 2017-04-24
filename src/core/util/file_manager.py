@@ -6,7 +6,7 @@ class FileManager():
         self.file_path = path
 
         file_name, file_type = os.path.splitext(path)
-        self.filename = file_name[file_name.rfind('/'):]
+        self.filename = file_name[file_name.rfind('/') + 1:]
         self.file_type = file_type
 
     def set_path(self, file_path):

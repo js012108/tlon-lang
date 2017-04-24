@@ -18,7 +18,10 @@ class TLONVariable__:
     self.params = params
 
   def __eq__(self, other):
-    return isinstance(other, TLONVariable__) and self.name == other.name
+    if isinstance(other, str):
+      return self.name == other
+    else:
+      return isinstance(other, TLONVariable__) and self.name == other.name
 
   def __str__(self):
     return "- Name: " + self.name + " - Value: " + str(self.value)
@@ -62,7 +65,7 @@ class TLONLocalMemory__:
         if isinstance(var, TLONVariable__):
           self.variables[name] = var
         else:
-          raise Exception('Error: Wrong type of Variable item.')
+          self.variables[name] = TLONVariable__(name, var, 'any')
 
   def find(self, name):
     portions = name.split('.')
@@ -120,7 +123,10 @@ class TLONLocalMemory__:
     var = self.find(name)
 
     if var is None:
-      self.variables[name] = TLONVariable__(name, obj, 'default')
+      if isinstance(obj, TLONVariable__):
+        self.variables[name] = obj
+      else:
+        self.variables[name] = TLONVariable__(name, obj, 'default')
     else:
       var.set_value(obj)
 
@@ -155,11 +161,11 @@ class TLONGlobalMemory__():
   def find(self, name):
     result = None
 
-    for memory in self.memory_stack:
+    for memory in reversed(self.memory_stack):
       try:
         result = memory.find(name)
       except Exception as e:
-        pass
+        raise e
 
       if result is not None:
         break
@@ -169,11 +175,38 @@ class TLONGlobalMemory__():
   def peek_memory(self):
     return self.memory_stack[-1]
 
+  def get_memory(self, index):
+    if index < 0 or index > len(self.memory_stack):
+      raise Exception('Memory IndexOutOfRange')
+
+    return self.memory_stack[index]
+
   def assign(self, name, obj):
     var = self.find(name)
 
     if var is None:
+      if not isinstance(obj, TLONVariable__):
+        obj = TLONVariable__(name, obj, 'any')
+
       local_memory = self.peek_memory()
+
       local_memory.assign(name, obj)
     else:
       var.set_value(obj)
+
+    pass
+
+  def add_memory(self, name, params={}):
+    if type(params) is not dict:
+      raise Exception('Error: typeof \'params\' is not dict')
+
+    memory_depth = self.memory_stack[-1].depth + 1
+
+    local_memory = TLONLocalMemory__(name, memory_depth, params)
+
+    self.memory_stack.append(local_memory)
+
+    return local_memory
+
+  def pop_memory(self):
+    return self.memory_stack.pop()
