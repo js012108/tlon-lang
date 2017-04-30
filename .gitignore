@@ -99,4 +99,5 @@ ENV/
 # Custom ignores
 # **/__pycache__/
 # **/*.pyc
+test/test_write.txt
 **/.idea
