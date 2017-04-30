@@ -11,7 +11,7 @@ import inspect
 
 
 class TLONVariable__:
-  def __init__(self, name, value=None, kind=None, params={}):
+  def __init__(self, name, value=None, kind='any', params={}):
     self.name = name
     self.kind = kind
     self.value = value
@@ -24,7 +24,7 @@ class TLONVariable__:
       return isinstance(other, TLONVariable__) and self.name == other.name
 
   def __str__(self):
-    return "- Name: " + self.name + " - Value: " + str(self.value)
+    return "| NAME: " + self.name + " - VALUE: " + str(self.value) + ' - KIND: ' + str(self.kind) + ' |'
 
   def set_value(self, value):
     self.value = value

@@ -97,6 +97,6 @@ ENV/
 /site
 
 # Custom ignores
-**/__pycache__/
-**/*.pyc
+# **/__pycache__/
+# **/*.pyc
 **/.idea
