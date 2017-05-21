@@ -4,7 +4,7 @@ funcion factorial(numero)
  }
 
  retorno (numero * factorial(numero - 1))
-end funcion
+end
 
 
 log("prueba de recursividad")
@@ -13,11 +13,11 @@ log(factorial(4))
 
 funcion hola(nombre)
 log ("Hola " + nombre + " :D")
-end funcion
+end
 
 funcion llamar(func, params)
     func(params)
-end funcion
+end
 
 llamar(hola, "Joaquin")
 
