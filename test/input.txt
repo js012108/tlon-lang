@@ -1,34 +1,34 @@
 funcion factorial(numero)
  if (numero == 0) {
- 	retorno (1);
+ 	retorno (1)
  }
 
- retorno (numero * factorial(numero - 1));
+ retorno (numero * factorial(numero - 1))
 end funcion
 
 
-log("prueba de recursividad");
-log(factorial(4));
+log("prueba de recursividad")
+log(factorial(4))
 
 
 funcion hola(nombre)
-log ("Hola " + nombre + " :D");
+log ("Hola " + nombre + " :D")
 end funcion
 
 funcion llamar(func, params)
-func(params);
+    func(params)
 end funcion
 
-llamar(hola, "Joaquin");
+llamar(hola, "Joaquin")
 
 importar core.util.file_manager
 
-a = FileManager("test/write.txt");
+a = FileManager("test/write.txt")
 
-a.put("Prueba 1");
+a.put("Prueba 1")
 
-archivo = FileManager("test/test_write.txt");
+archivo = FileManager("test/test_write.txt")
 
-archivo.put("AdiosMundo");
-archivo.put("Esto es final...");
-archivo.close();
+archivo.put("AdiosMundo")
+archivo.put("Esto es final...")
+archivo.close()

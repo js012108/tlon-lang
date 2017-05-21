@@ -1,28 +1,40 @@
 grammar TLON;
 
 parse
- : block EOF
+ : from_input | from_file
  ;
 
-block
- : stat (stat*)
+from_input
+ : stat NEWLINE
+ ;
+
+from_file
+ : (stat|NEWLINE)* EOF
  ;
 
 stat
- : assignment
- | if_stat
+ : simple_stat
+ | compound_stat
+ ;
+
+compound_stat
+ : if_stat
  | while_stat
  | for_stat
- | log
  | funcion
+ ;
+
+simple_stat
+ : assignment
+ | log
  | importar
  | retornar
- | atom SCOL
+ | atom NEWLINE
  | OTHER
  ;
 
 assignment
- : variable ASSIGN expr SCOL
+ : variable ASSIGN (assignment|expr)
  ;
 
 if_stat
@@ -38,11 +50,11 @@ for_stat
  ;
 
 log
- : LOG OPAR expr CPAR SCOL
+ : LOG OPAR expr CPAR NEWLINE
  ;
 
 funcion
- : FUNCION ID OPAR (parametro (COMMA parametro)*)? CPAR stat* END FUNCION
+ : FUNCION ID OPAR (parametro (COMMA parametro)*)? CPAR (NEWLINE|stat)* END
  ;
 
 importar
@@ -51,21 +63,21 @@ importar
  ;
 
 retornar
- : RETORNO OPAR expr CPAR SCOL
+ : RETORNO OPAR expr CPAR NEWLINE
  ;
 
 condition_block
- : expr stat_block
+ : expr NEWLINE? stat_block
  ;
 
 stat_block
- : OBRACE block? CBRACE
- | stat
+ : OBRACE (stat|NEWLINE)* CBRACE
+ | stat NEWLINE
  ;
 
 array
  : OKEY (expr (COMMA expr)*)? CKEY
- | OKEY expr POINTS (expr POINTS)? expr CKEY
+ | OKEY start=expr POINTS (step=expr POINTS)? end=expr CKEY
  ;
 
 accessarray
@@ -81,28 +93,28 @@ parametro
  ;
 
 expr
- : expr POW<assoc=right> expr           #powExpr
- | MINUS expr                           #unaryMinusExpr
- | NOT expr                             #notExpr
- | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
- | expr op=(PLUS | MINUS) expr          #additiveExpr
- | expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
- | expr op=(EQ | NEQ) expr              #equalityExpr
- | expr AND expr                        #andExpr
- | expr OR expr                         #orExpr
- | OPAR expr CPAR 						#parExpr
- | atom                                 #atomExpr
+ : <assoc=right>left=expr POW right=expr        #powExpr
+ | MINUS expr                                   #unaryMinusExpr
+ | NOT expr                                     #notExpr
+ | left=expr op=(MULT|DIV|MOD) right=expr       #multiplicationExpr
+ | left=expr op=(PLUS|MINUS) right=expr         #additiveExpr
+ | left=expr op=(LTEQ|GTEQ|LT|GT) right=expr    #relationalExpr
+ | left=expr op=(EQ|NEQ) right=expr             #equalityExpr
+ | left=expr AND right=expr                     #andExpr
+ | left=expr OR right=expr                      #orExpr
+ | OPAR expr CPAR 						        #parExpr
+ | atom                                         #atomExpr
  ;
 
 atom
- : (INT | FLOAT)  #numberAtom
- | (TRUE | FALSE) #booleanAtom
- | STRING         #stringAtom
- | array		  #arrayAtom
- | objeto		  #objetoAtom
- | accessarray    #accessToarray
- | variable		  #accessVariable
- | NIL            #nilAtom
+ : (INT|FLOAT)  #numberAtom
+ | (TRUE|FALSE) #booleanAtom
+ | STRING       #stringAtom
+ | array		#arrayAtom
+ | objeto		#objetoAtom
+ | accessarray  #accessToarray
+ | variable		#accessVariable
+ | NIL          #nilAtom
  ;
 
 objeto
@@ -129,7 +141,6 @@ MOD : '%';
 POW : '^';
 NOT : '!';
 
-SCOL : ';';
 ASSIGN : '=';
 OPAR : '(';
 CPAR : ')';
@@ -179,7 +190,11 @@ COMMENT
  ;
 
 SPACE
- : [ \t\r\n] -> skip
+ : [ \t\r] -> skip
+ ;
+
+NEWLINE
+ : [\n]
  ;
 
 OTHER

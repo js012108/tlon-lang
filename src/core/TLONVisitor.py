@@ -1,4 +1,4 @@
-# Generated from TLON.g4 by ANTLR 4.6
+# Generated from /home/eccarrilloe/projects/python/tlon-lang/src/core/grammar/TLON.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .TLONParser import TLONParser
@@ -14,13 +14,28 @@ class TLONVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by TLONParser#block.
-    def visitBlock(self, ctx:TLONParser.BlockContext):
+    # Visit a parse tree produced by TLONParser#from_input.
+    def visitFrom_input(self, ctx:TLONParser.From_inputContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#from_file.
+    def visitFrom_file(self, ctx:TLONParser.From_fileContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by TLONParser#stat.
     def visitStat(self, ctx:TLONParser.StatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#compound_stat.
+    def visitCompound_stat(self, ctx:TLONParser.Compound_statContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#simple_stat.
+    def visitSimple_stat(self, ctx:TLONParser.Simple_statContext):
         return self.visitChildren(ctx)
 
 

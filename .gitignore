@@ -101,3 +101,4 @@ ENV/
 **/*.pyc
 test/test_write.txt
 **/.idea
+!/src/core/grammar/TLON.g4

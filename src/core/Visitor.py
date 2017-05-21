@@ -18,17 +18,176 @@ class Visitor(TLONVisitor):
   def __init__(self, memory_manager=TLONGlobalMemory__()):
     self.memory_manager = memory_manager
 
-  def visitAssignment(self, ctx):
-    name = ctx.variable().getText()
-    value = self.visit(ctx.expr())
+  # Visit a parse tree produced by TLONParser#parse.
+  def visitParse(self, ctx: TLONParser.ParseContext):
+    if ctx.from_file is not None:
+      return self.visit(ctx.from_file())
+    else:
+      return self.visit(ctx.from_input())
+
+  # Visit a parse tree produced by TLONParser#from_input.
+  def visitFrom_input(self, ctx: TLONParser.From_inputContext):
+    return self.visit(ctx.stat())
+
+  # Visit a parse tree produced by TLONParser#from_file.
+  def visitFrom_file(self, ctx: TLONParser.From_fileContext):
+    return self.visitChildren(ctx)
+
+  # Visit a parse tree produced by TLONParser#stat.
+  def visitStat(self, ctx: TLONParser.StatContext):
+    if ctx.compound_stat() is not None:
+      return self.visit(ctx.compound_stat())
+
+    return self.visit(ctx.simple_stat())
+
+  # Visit a parse tree produced by TLONParser#compound_stat.
+  def visitCompound_stat(self, ctx: TLONParser.Compound_statContext):
+    if ctx.if_stat() is not None:
+      return self.visit(ctx.if_stat())
+    elif ctx.while_stat() is not None:
+      return self.visit(ctx.while_stat())
+    elif ctx.for_stat() is not None:
+      return self.visit(ctx.for_stat())
+
+    return self.visit(ctx.funcion())
+
+  # Visit a parse tree produced by TLONParser#simple_stat.
+  def visitSimple_stat(self, ctx: TLONParser.Simple_statContext):
+    if ctx.assignment() is not None:
+      return self.visit(ctx.assignment())
+    elif ctx.log() is not None:
+      return self.visit(ctx.log())
+    elif ctx.importar() is not None:
+      return self.visit(ctx.importar())
+    elif ctx.retornar() is not None:
+      return self.visit(ctx.retornar())
+    elif ctx.atom() is not None:
+      return self.visit(ctx.atom())
+
+    raise Exception('Semantic Error: Found ' + str(self.OTHER()))
+
+  # Visit a parse tree produced by TLONParser#assignment.
+  def visitAssignment(self, ctx: TLONParser.AssignmentContext):
+    name = str(ctx.variable().getText())
+    value = None
+
+    if ctx.expr() is not None:
+      value = self.visit(ctx.expr())
+    elif ctx.assignment() is not None:
+      value = self.visit(ctx.assigment())
 
     self.memory_manager.assign(name, value)
 
+    return value
+
+  # Visit a parse tree produced by TLONParser#if_stat.
+  def visitIf_stat(self, ctx: TLONParser.If_statContext):
+    conditions = ctx.condition_block()
+
+    for condition in conditions:
+      result = self.visit(condition)
+
+      if result['accepted'] is True:
+        return result['value_returned']
+
+    if ctx.stat_block() is not None:
+      self.memory_manager.add_memory('ELSE_STMT')
+      value_returned = self.visit(ctx.stat_block())
+      self.memory_manager.pop_memory()
+      return value_returned
+
     return None
 
-  def visitImportar(self, ctx):
-    packageName = '.'.join([str(x.getText()) for x in ctx.ID()])
-    mod = import_module(packageName)
+  # Visit a parse tree produced by TLONParser#while_stat.
+  def visitWhile_stat(self, ctx: TLONParser.While_statContext):
+    condition = self.visit(ctx.expr())
+    returned_value = None
+
+    while condition:
+      self.memory_manager.add_memory('WHILE_STMT')
+      returned_value = self.visit(ctx.stat_block())
+      self.memory_manager.pop_memory()
+
+      if returned_value is not None:
+        break
+
+      condition = self.visit(ctx.expr())
+
+    return returned_value
+
+  # Visit a parse tree produced by TLONParser#for_stat.
+  def visitFor_stat(self, ctx: TLONParser.For_statContext):
+    items = self.visit(ctx.expr())
+    var = str(ctx.ID())
+
+    if self.memory_manager.find(var) is not None:
+      raise Exception("Error: Cannot use variable " + var + ". Already assigned.")
+
+    if type(items) is list:
+      for item in items:
+        self.memory_manager.add_memory('FOR_STMT')
+        self.memory_manager.assign(var, item)
+        returned_value = self.visit(ctx.stat_block())
+        self.memory_manager.pop_memory()
+
+        if returned_value is not None:
+          return returned_value
+    else:
+      raise Exception("Error: Variable is not iterable.")
+
+    return None
+
+  # Visit a parse tree produced by TLONParser#log.
+  def visitLog(self, ctx: TLONParser.LogContext):
+    variable = self.visit(ctx.expr())
+
+    if isinstance(variable, TLONVariable__):
+      print(variable.value)
+    else:
+      print(variable)
+
+    return None
+
+  # Visit a parse tree produced by TLONParser#funcion.
+  def visitFuncion(self, ctx: TLONParser.FuncionContext):
+    opcionales = False
+
+    name = str(ctx.ID())
+    kind = 'user'
+    value = ctx.stat()
+
+    parameters = {}
+    for param in ctx.parametro():
+      param_name = str(param.ID())
+
+      if self.memory_manager.find(param_name) is not None:
+        raise Exception('Cannot assign variable as parameter of function. Already assigned.')
+
+      if (opcionales and param.ASSIGN() is None):
+        raise Exception('Cannot set mandatory parameter after optional parameter')
+
+      parameter = TLONParameter__(param_name)
+
+      if (param.ASSIGN() is not None):
+        parameter.kind = 'optional'
+        parameter.default = self.visit(param.expr())
+        opcionales = True
+      else:
+        parameter.kind = 'mandatory'
+
+      parameters[param_name] = parameter
+
+    local_memory = self.memory_manager.peek_memory()
+
+    funcion = TLONVariable__(name, value, kind, parameters)
+    local_memory.assign(name, funcion)
+
+    return funcion
+
+  # Visit a parse tree produced by TLONParser#importar.
+  def visitImportar(self, ctx: TLONParser.ImportarContext):
+    package_name = '.'.join([str(x.getText()) for x in ctx.ID()])
+    mod = import_module(package_name)
 
     global_mem = self.memory_manager.get_memory(0)
 
@@ -37,9 +196,80 @@ class Visitor(TLONVisitor):
         var = TLONVariable__(name, attribute, 'default')
         global_mem.assign(name, var)
 
-    return None
+    return mod
 
-  def visitVariable(self, ctx):
+  # Visit a parse tree produced by TLONParser#retornar.
+  def visitRetornar(self, ctx: TLONParser.RetornarContext):
+    return (self.visit(ctx.expr()), 1)
+
+  # Visit a parse tree produced by TLONParser#condition_block.
+  def visitCondition_block(self, ctx: TLONParser.Condition_blockContext):
+
+    result = { 'accepted': self.visit(ctx.expr()) }
+
+    if result['accepted'] is True:
+      self.memory_manager.add_memory('IF_STMT')
+      result['value_returned'] = self.visit(ctx.stat_block())
+      self.memory_manager.pop_memory()
+
+    return result
+
+  # Visit a parse tree produced by TLONParser#stat_block.
+  def visitStat_block(self, ctx: TLONParser.Stat_blockContext):
+    value_returned = None
+
+    for stat in ctx.stat():
+      value_returned = self.visit(stat)
+
+    return value_returned
+
+  # Visit a parse tree produced by TLONParser#array.
+  def visitArray(self, ctx: TLONParser.ArrayContext):
+    array = []
+
+    if (ctx.POINTS() is not None):
+      try:
+        init = self.visit(ctx.start())
+        end = self.visit(ctx.end())
+        step = 1
+
+        if ctx.step is not None:
+          step = self.visit(ctx.step())
+
+        if type(init) is float or type(end) is float or type(step) is float:
+          init = float(init)
+          step = float(step)
+          end = float(end)
+        else:
+          init = int(init)
+          step = int(step)
+          end = int(end)
+
+        array = range(init, end, step)
+      except Exception:
+        raise Exception('Error: Variable types are not numeric.')
+
+    else:
+      items = ctx.expr()
+
+      for item in items:
+        value = self.visit(item)
+        array.append(value)
+
+    return array
+
+  # Visit a parse tree produced by TLONParser#accessarray.
+  def visitAccessarray(self, ctx: TLONParser.AccessarrayContext):
+    variable = self.visit(ctx.variable())
+    position = self.visit(ctx.expr())
+
+    if type(variable) is list and type(position) is int:
+      return variable[position]
+    else:
+      raise Exception("Error: Variable is not list.")
+
+  # Visit a parse tree produced by TLONParser#variable.
+  def visitVariable(self, ctx: TLONParser.VariableContext):
     name = ctx.ID()
 
     name = '.'.join(list(map(lambda x: x.getText(), name)))
@@ -47,8 +277,8 @@ class Visitor(TLONVisitor):
     item = self.memory_manager.find(name)
 
     if item.kind == 'default' or (item.kind == 'any' and not (type(item.value) is int or type(item.value) is float or
-                                                                   type(item.value) is str or type(item.value) is list or
-                                                                   type(item.value) is dict)):
+                                                                  type(item.value) is str or type(item.value) is list or
+                                                                  type(item.value) is dict)):
       if ctx.OPAR() is not None:
         params = list(map(lambda x: self.visit(x), ctx.expr()))
         if not isbuiltin(item.value):
@@ -106,58 +336,37 @@ class Visitor(TLONVisitor):
         return item
     elif item.kind == 'any':
       if (type(item.value) is int or type(item.value) is float or type(item.value) is str or
-          type(item.value) is list or type(item.value) is dict):
+              type(item.value) is list or type(item.value) is dict):
         item = item.value
 
     return item
 
-  def visitStringAtom(self, ctx):
-    string = str(ctx.STRING().getText())
-    string = string[1:len(string) - 1]
-    return string
+  # Visit a parse tree produced by TLONParser#parametro.
+  def visitParametro(self, ctx: TLONParser.ParametroContext):
+    return self.visitChildren(ctx)
 
-  def visitNumberAtom(self, ctx):
-    if ctx.INT() is not None:
-      return int(ctx.INT().getText())
+  # Visit a parse tree produced by TLONParser#parExpr.
+  def visitParExpr(self, ctx: TLONParser.ParExprContext):
+    return self.visit(ctx.expr())
 
-    return float(ctx.FLOAT().getText())
+  # Visit a parse tree produced by TLONParser#notExpr.
+  def visitNotExpr(self, ctx: TLONParser.NotExprContext):
+    value = self.visit(ctx.expr())
 
-  def visitLog(self, ctx):
-    variable = self.visit(ctx.expr())
+    if isinstance(value, TLONVariable__):
+      value = value.value
 
-    if isinstance(variable, TLONVariable__):
-      print(variable.value)
-    else:
-      print(variable)
-    return None
+    return not value
 
-  def visitBooleanAtom(self, ctx):
-    if ctx.TRUE() is not None:
-      return True
-
-    return False
-
-  def visitNilAtom(self, ctx):
-    return None
-
-  def visitPowExpr(self, ctx):
-    left = self.visit(ctx.expr(0))
-    right = self.visit(ctx.expr(1))
-
-    if isinstance(left, TLONVariable__):
-      left = left.value
-    if isinstance(right, TLONVariable__):
-      right = right.value
-
-    return math.pow(left, right)
-
-  def visitUnaryMinusExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#unaryMinusExpr.
+  def visitUnaryMinusExpr(self, ctx: TLONParser.UnaryMinusExprContext):
     data = self.visit(ctx.expr())
     if isinstance(data, TLONVariable__):
       data = data.value
     return -data
 
-  def visitMultiplicationExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#multiplicationExpr.
+  def visitMultiplicationExpr(self, ctx: TLONParser.MultiplicationExprContext):
     left = self.visit(ctx.expr(0))
     right = self.visit(ctx.expr(1))
 
@@ -180,7 +389,24 @@ class Visitor(TLONVisitor):
     if ctx.op.type == TLONParser.MOD:
       return left % right
 
-  def visitAdditiveExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#atomExpr.
+  def visitAtomExpr(self, ctx: TLONParser.AtomExprContext):
+    return self.visitChildren(ctx)
+
+  # Visit a parse tree produced by TLONParser#orExpr.
+  def visitOrExpr(self, ctx: TLONParser.OrExprContext):
+    left = self.visit(ctx.expr(0))
+    right = self.visit(ctx.expr(1))
+
+    if isinstance(left, TLONVariable__):
+      left = left.value
+    if isinstance(right, TLONVariable__):
+      right = right.value
+
+    return left or right
+
+  # Visit a parse tree produced by TLONParser#additiveExpr.
+  def visitAdditiveExpr(self, ctx: TLONParser.AdditiveExprContext):
     left = self.visit(ctx.expr(0))
     right = self.visit(ctx.expr(1))
 
@@ -194,7 +420,20 @@ class Visitor(TLONVisitor):
     if ctx.op.type == TLONParser.MINUS:
       return left - right
 
-  def visitRelationalExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#powExpr.
+  def visitPowExpr(self, ctx: TLONParser.PowExprContext):
+    left = self.visit(ctx.expr(0))
+    right = self.visit(ctx.expr(1))
+
+    if isinstance(left, TLONVariable__):
+      left = left.value
+    if isinstance(right, TLONVariable__):
+      right = right.value
+
+    return math.pow(left, right)
+
+  # Visit a parse tree produced by TLONParser#relationalExpr.
+  def visitRelationalExpr(self, ctx: TLONParser.RelationalExprContext):
     left = self.visit(ctx.expr(0))
     right = self.visit(ctx.expr(1))
 
@@ -212,7 +451,8 @@ class Visitor(TLONVisitor):
     if ctx.op.type == TLONParser.GTEQ:
       return left >= right
 
-  def visitEqualityExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#equalityExpr.
+  def visitEqualityExpr(self, ctx: TLONParser.EqualityExprContext):
     left = self.visit(ctx.expr(0))
     right = self.visit(ctx.expr(1))
 
@@ -226,7 +466,8 @@ class Visitor(TLONVisitor):
     elif ctx.op.type == TLONParser.NEQ:
       return left != right
 
-  def visitAndExpr(self, ctx):
+  # Visit a parse tree produced by TLONParser#andExpr.
+  def visitAndExpr(self, ctx: TLONParser.AndExprContext):
     left = self.visit(ctx.expr(0))
     right = self.visit(ctx.expr(1))
 
@@ -237,169 +478,49 @@ class Visitor(TLONVisitor):
 
     return left and right
 
-  def visitOrExpr(self, ctx):
-    left = self.visit(ctx.expr(0))
-    right = self.visit(ctx.expr(1))
+  # Visit a parse tree produced by TLONParser#numberAtom.
+  def visitNumberAtom(self, ctx: TLONParser.NumberAtomContext):
+    if ctx.INT() is not None:
+      return int(ctx.INT().getText())
 
-    if isinstance(left, TLONVariable__):
-      left = left.value
-    if isinstance(right, TLONVariable__):
-      right = right.value
+    return float(ctx.FLOAT().getText())
 
-    return left or right
+  # Visit a parse tree produced by TLONParser#booleanAtom.
+  def visitBooleanAtom(self, ctx: TLONParser.BooleanAtomContext):
+    if ctx.TRUE() is not None:
+      return True
 
-  def visitNotExpr(self, ctx):
-    value = self.visit(ctx.expr())
+    return False
 
-    if isinstance(value, TLONVariable__):
-      value = value.value
+  # Visit a parse tree produced by TLONParser#stringAtom.
+  def visitStringAtom(self, ctx: TLONParser.StringAtomContext):
+    string = str(ctx.STRING().getText())
+    string = string[1:len(string) - 1]
 
-    return not value
+    return string
 
-  def visitIf_stat(self, ctx):
-    conditions = ctx.condition_block()
+  # Visit a parse tree produced by TLONParser#arrayAtom.
+  def visitArrayAtom(self, ctx: TLONParser.ArrayAtomContext):
+    return self.visitChildren(ctx)
 
-    is_accepted = False
-    for condition in conditions:
-      is_accepted = self.visit(condition.expr())
+  # Visit a parse tree produced by TLONParser#objetoAtom.
+  def visitObjetoAtom(self, ctx: TLONParser.ObjetoAtomContext):
+    return self.visitChildren(ctx)
 
-      if is_accepted is True:
-        self.memory_manager.add_memory('IF_STAT')
-        value = self.visit(condition.stat_block())
-        self.memory_manager.pop_memory()
-        if (type(value) is tuple and value[1] == 1):
-          return value
+  # Visit a parse tree produced by TLONParser#accessToarray.
+  def visitAccessToarray(self, ctx: TLONParser.AccessToarrayContext):
+    return self.visitChildren(ctx)
 
-    if is_accepted is False and ctx.stat_block() is not None:
-      self.memory_manager.add_memory('IF_STAT')
-      value = self.visit(ctx.stat_block())
-      if (type(value) is tuple and value[1] == 1):
-        return value
-      self.memory_manager.pop_memory()
+  # Visit a parse tree produced by TLONParser#accessVariable.
+  def visitAccessVariable(self, ctx: TLONParser.AccessVariableContext):
+    return self.visitChildren(ctx)
 
+  # Visit a parse tree produced by TLONParser#nilAtom.
+  def visitNilAtom(self, ctx: TLONParser.NilAtomContext):
     return None
 
-  def visitWhile_stat(self, ctx):
-    condition = self.visit(ctx.expr())
-
-    while condition:
-      self.memory_manager.add_memory('WHILE_LOOP')
-      self.visit(ctx.stat_block())
-      self.memory_manager.pop_memory()
-
-      condition = self.visit(ctx.expr())
-
-    return None
-
-  # Revisar que esta haciendo esta funcion
-  def visitFor_stat(self, ctx):
-    items = self.visit(ctx.expr())
-    var = str(ctx.ID())
-
-    if self.memory_manager.find(var) is not None:
-      raise Exception("Error: Can\'t use variable " + var + " already assigned.")
-
-    if type(items) is list:
-
-      for item in items:
-        self.memory_manager.add_memory('FOR_LOOP')
-        self.memory_manager.assign(var, item)
-
-        self.visit(ctx.stat_block())
-
-        self.memory_manager.pop_memory()
-    else:
-      raise Exception("Error: Variable is not iterable.")
-
-    return None
-
-  def visitArray(self, ctx):
-    items = ctx.expr()
-    array = []
-
-    if (ctx.POINTS() is not None):
-      try:
-        init = self.visit(items[0])
-        step = 1
-        end = self.visit(items[-1])
-
-        if len(ctx.POINTS()) == 2:
-          step = self.visit(items[1])
-
-        if type(init) is float or type(end) is float or type(step) is float:
-          init = float(init)
-          step = float(step)
-          end = float(end)
-        else:
-          init = int(init)
-          step = int(step)
-          end = int(end)
-
-      except Exception:
-        raise Exception('Error: Variable types are not numeric.')
-
-      i = init
-      while i <= end:
-        array.append(i)
-        i += step
-
-      if i > end and i < end + step:
-        array.append(end)
-    else:
-      for item in items:
-        value = self.visit(item)
-        array.append(value)
-
-    return array
-
-  def visitAccessarray(self, ctx):
-    variable = self.visit(ctx.variable())
-    position = self.visit(ctx.expr())
-
-    if type(variable) is list and type(position) is int:
-      return variable[position]
-    else:
-      raise Exception("Error: Variable is not list.")
-
-  def visitFuncion(self, ctx):
-    opcionales = False
-
-    name = str(ctx.ID())
-    kind = 'user'
-    value = ctx.stat()
-
-    parameters = {}
-    for param in ctx.parametro():
-      param_name = str(param.ID())
-
-      if self.memory_manager.find(param_name) is not None:
-        raise Exception('Can\'t assign variable as parameter of function')
-
-      if (opcionales and param.ASSIGN() is None):
-        raise Exception('Can\'t set mandatory parameter after optional parameter')
-
-      parameter = TLONParameter__(param_name)
-
-      if (param.ASSIGN() is not None):
-        parameter.kind = 'optional'
-        parameter.default = self.visit(param.expr())
-        opcionales = True
-      else:
-        parameter.kind = 'mandatory'
-
-      parameters[param_name] = parameter
-
-    local_memory = self.memory_manager.peek_memory()
-
-    funcion = TLONVariable__(name, value, kind, parameters)
-    local_memory.assign(name, funcion)
-
-    return None
-
-  def visitRetornar(self, ctx):
-    return (self.visit(ctx.expr()), 1)
-
-  def visitObjeto(self, ctx):
+  # Visit a parse tree produced by TLONParser#objeto.
+  def visitObjeto(self, ctx: TLONParser.ObjetoContext):
     items = {}
 
     for it in ctx.keyvalue():
@@ -408,52 +529,11 @@ class Visitor(TLONVisitor):
 
     return items
 
-  def visitKeyvalue(self, ctx):
+  # Visit a parse tree produced by TLONParser#keyvalue.
+  def visitKeyvalue(self, ctx: TLONParser.KeyvalueContext):
     name = str(ctx.ID())
     value = self.visit(ctx.expr())
 
     obj = TLONVariable__(name, value, 'any')
 
     return obj
-
-  def visitStat(self, ctx: TLONParser.StatContext):
-    if (ctx.if_stat() is not None):
-      value = self.visit(ctx.if_stat())
-      if (type(value) is tuple and value[1] == 1):
-        return value
-    if (ctx.retornar() is not None):
-      value = self.visit(ctx.retornar())
-    return self.visitChildren(ctx)
-
-  def visitBlock(self, ctx: TLONParser.BlockContext):
-    for stat in ctx.stat():
-      value = self.visit(stat)
-      if (type(value) is tuple and value[1] == 1):
-        return value
-    return None
-
-  def visitStat_block(self, ctx: TLONParser.Stat_blockContext):
-
-    if ctx.block() is not None:
-      for stat in ctx.block().stat():
-        value = self.visit(stat)
-        if (type(value) is tuple and value[1] == 1):
-          return value
-
-    else:
-      value = self.visit(ctx.stat())
-      if (type(value) is tuple and value[1] == 1):
-        return value
-
-    return None
-
-  def visitParExpr(self, ctx: TLONParser.ParExprContext):
-    return self.visit(ctx.expr())
-
-  def visitCondition_block(self, ctx: TLONParser.Condition_blockContext):
-    value = self.visit(ctx.stat_block())
-
-    if (type(value) is tuple and value[1] == 1):
-      return value
-
-    return None

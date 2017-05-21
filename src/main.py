@@ -1,27 +1,55 @@
-import sys
-from core import *
 from antlr4 import *
+from core import *
 
 
 def main():
-  print ('LangTLON v1.0')
+  print ('----- LangTLON v1.0 -----')
+  print ()
+
   memory = TLONGlobalMemory__()
-  file_param = False
-  input_stream = None
 
   if len(sys.argv) > 1:
-    file_param = True
-    input_stream = FileStream(sys.argv[1])
+    try:
+      input_stream = FileStream(sys.argv[1])
+    except Exception as e:
+      raise Exception('File not Found.')
+
+    lexer = TLONLexer(input_stream)
+    token_stream = CommonTokenStream(lexer)
+    parser = TLONParser(token_stream)
+    tree = parser.from_file()
+
+    visitor = Visitor(memory)
+    visitor.visit(tree)
+
   else:
-    input_stream = InputStream(sys.stdin.readline())
+    while True:
+      print('>>> ', end='', flush=True)
+      input_data = sys.stdin.readline().strip()
+      tabs = input_data.count('{') + input_data.count('funcion') - \
+             input_data.count('}') - input_data.count('end')
 
-  lexer = TLONLexer(input_stream)
-  token_stream = CommonTokenStream(lexer)
-  parser = TLONParser(token_stream)
-  tree = parser.parse()
+      if 'exit()' in input_data:
+        print ('Message: Console terminated')
+        break
 
-  visitor = Visitor(memory)
-  visitor.visit(tree)
+      while tabs > 0:
+        print ('... ', end='', flush=True)
+        input_data = input_data + sys.stdin.readline()
+        tabs = input_data.count('{') + input_data.count('funcion') - input_data.count('}') - input_data.count('end')
+
+      input_stream = InputStream(input_data)
+
+      lexer = TLONLexer(input_stream)
+      token_stream = CommonTokenStream(lexer)
+      parser = TLONParser(token_stream)
+      tree = parser.parse()
+
+      visitor = Visitor(memory)
+      result = visitor.visit(tree)
+
+      if result is not None:
+        print (result)
 
 
 if __name__ == '__main__':
