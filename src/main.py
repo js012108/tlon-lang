@@ -21,7 +21,6 @@ def main():
 
     visitor = Visitor(memory)
     visitor.visit(tree)
-
   else:
     while True:
       print('>>> ', end='', flush=True)

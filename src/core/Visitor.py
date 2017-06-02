@@ -1,5 +1,6 @@
 import sys
 import math
+from numpy import arange
 from inspect import signature, _empty, isbuiltin
 from importlib import import_module
 
@@ -108,12 +109,12 @@ class Visitor(TLONVisitor):
       returned_value = self.visit(ctx.stat_block())
       self.memory_manager.pop_memory()
 
-      if returned_value is not None:
-        break
+      if type(returned_value) is tuple and returned_value[1] == 1:
+        return returned_value[0]
 
       condition = self.visit(ctx.expr())
 
-    return returned_value
+    return None
 
   # Visit a parse tree produced by TLONParser#for_stat.
   def visitFor_stat(self, ctx: TLONParser.For_statContext):
@@ -130,8 +131,8 @@ class Visitor(TLONVisitor):
         returned_value = self.visit(ctx.stat_block())
         self.memory_manager.pop_memory()
 
-        if returned_value is not None:
-          return returned_value
+        if type(returned_value) is tuple and returned_value[1] == 1:
+          return returned_value[0]
     else:
       raise Exception("Error: Variable is not iterable.")
 
@@ -227,14 +228,15 @@ class Visitor(TLONVisitor):
   def visitArray(self, ctx: TLONParser.ArrayContext):
     array = []
 
-    if (ctx.POINTS() is not None):
+    if (len(ctx.POINTS()) > 0):
       try:
-        init = self.visit(ctx.start())
-        end = self.visit(ctx.end())
+        init = self.visit(ctx.expr(0))
+        end = self.visit(ctx.expr(1)) + 1
         step = 1
 
         if ctx.step is not None:
-          step = self.visit(ctx.step())
+          step = self.visit(ctx.expr(1))
+          end = self.visit(ctx.expr(2)) + 1
 
         if type(init) is float or type(end) is float or type(step) is float:
           init = float(init)
@@ -245,8 +247,9 @@ class Visitor(TLONVisitor):
           step = int(step)
           end = int(end)
 
-        array = range(init, end, step)
-      except Exception:
+        array = list(arange(init, end, step))
+      except Exception as e:
+        print (e)
         raise Exception('Error: Variable types are not numeric.')
 
     else:
@@ -501,7 +504,7 @@ class Visitor(TLONVisitor):
 
   # Visit a parse tree produced by TLONParser#arrayAtom.
   def visitArrayAtom(self, ctx: TLONParser.ArrayAtomContext):
-    return self.visitChildren(ctx)
+    return self.visit(ctx.array());
 
   # Visit a parse tree produced by TLONParser#objetoAtom.
   def visitObjetoAtom(self, ctx: TLONParser.ObjetoAtomContext):

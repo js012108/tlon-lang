@@ -1,34 +1,18 @@
-funcion factorial(numero)
- if (numero == 0) {
- 	retorno (1)
- }
+a = 2
 
- retorno (numero * factorial(numero - 1))
-end
+while (a < 6) {
+    log (a)
+    a = a + 1
+}
 
+a = [1, 2, 3]
 
-log("prueba de recursividad")
-log(factorial(4))
+for item in a {
+  log(item)
+}
 
+a = [1:0.2:2]
 
-funcion hola(nombre)
-log ("Hola " + nombre + " :D")
-end
-
-funcion llamar(func, params)
-    func(params)
-end
-
-llamar(hola, "Joaquin")
-
-importar core.util.file_manager
-
-a = FileManager("test/write.txt")
-
-a.put("Prueba 1")
-
-archivo = FileManager("test/test_write.txt")
-
-archivo.put("AdiosMundo")
-archivo.put("Esto es final...")
-archivo.close()
+for item in a {
+  log(item)
+}
