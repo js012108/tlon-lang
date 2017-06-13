@@ -50,7 +50,7 @@ for_stat
  ;
 
 log
- : LOG OPAR expr CPAR NEWLINE
+ : LOG OPAR expr CPAR
  ;
 
 funcion

@@ -316,6 +316,11 @@ class Visitor(TLONVisitor):
 
         index = 0
         func_params = {}
+        ########################################################
+        # ERROR
+        # Resolver problema con programacion funcional
+        # A veces se cambia el orden de los items en 'iem.params.items()'
+        ########################################################
         for name, param in item.params.items():
           if len(params) <= index:
             break
