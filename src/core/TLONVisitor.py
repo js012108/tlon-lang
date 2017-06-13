@@ -1,4 +1,4 @@
-# Generated from /home/eccarrilloe/projects/python/tlon-lang/src/core/grammar/TLON.g4 by ANTLR 4.7
+# Generated from TLON.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .TLONParser import TLONParser
