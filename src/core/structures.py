@@ -3,6 +3,7 @@
 ##
 
 import inspect
+import sys
 
 ##
 # Class TLONVariable__

@@ -1,15 +1,38 @@
-funcion hola(nombre)
-log ("Hola " + nombre + " :D")
+importar lib.agent.agent
+
+funcion action1(entrada)
+  log("State 1: 10")
+  retorno (10)
 end
 
-funcion llamar(func, params)
-    func(params)
+funcion action2(entrada)
+  print("State 2: " + str(entrada))
+  retorno (entrada)
 end
 
-llamar(hola, "Joaquin")
+funcion action3(entrada)
+  print("State 3: " + str(entrada))
+  retorno(entrada + 10)
+end
 
-a = 2
-b = 3
-c = a + b
-log(c)
+funcion action4(entrada)
+  print("State 4: " + str(entrada))
+  retorno(entrada)
+end
 
+funcion action5(entrada)
+  print("State 5: " + str(entrada))
+  retorno(entrada)
+end
+
+state1 = State(1, action1, false, [{ id: 2, condition: 15 },{ id: 3, condition: 10 }])
+state2 = State(2, action2, false, [])
+
+state3 = State(3, action3, false, [{ id: 4, condition: 30 },{ id: 5, condition: 20 }])
+state4 = State(4, action4, false, [])
+state5 = State(5, action5, true, [])
+
+agent = Agent("Agente Suma", 1, [state1, state2, state3, state4, state5])
+
+result = agent.run()
+log("RESULT: " + str(result))

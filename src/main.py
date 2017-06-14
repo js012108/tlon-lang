@@ -1,10 +1,8 @@
 from antlr4 import *
 from core import *
 
-
 def main():
-  print ('----- LangTLON v1.0 -----')
-  print ()
+  print ('----- LangTLON v1.0 -----\n')
 
   memory = TLONGlobalMemory__()
 

@@ -10,11 +10,13 @@ from .TLONVisitor import TLONVisitor
 from .structures import *
 
 sys.setrecursionlimit(100000)
+sys.path.append('/src/lib')
 
 
 class Visitor(TLONVisitor):
   memory_manager = None
   value_returned = False
+  line_error = -1
 
   def __init__(self, memory_manager=TLONGlobalMemory__()):
     self.memory_manager = memory_manager
@@ -278,6 +280,8 @@ class Visitor(TLONVisitor):
     name = '.'.join(list(map(lambda x: x.getText(), name)))
 
     item = self.memory_manager.find(name)
+
+    a = 1
 
     if item.kind == 'default' or (item.kind == 'any' and not (type(item.value) is int or type(item.value) is float or
                                                                   type(item.value) is str or type(item.value) is list or

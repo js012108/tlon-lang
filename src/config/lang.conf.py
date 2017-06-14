@@ -2,4 +2,10 @@
 # Common configuration for TLON Language
 ##
 
-driver: 'default'
+config = {
+  'driver': 'default',
+
+  'default_libs': [
+    ''
+  ]
+}
