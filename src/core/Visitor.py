@@ -270,7 +270,7 @@ class Visitor(TLONVisitor):
     variable = self.visit(ctx.variable())
     position = self.visit(ctx.expr())
 
-    if type(variable) is list and type(position) is int:
+    if (isinstance(variable, list) or isinstance(variable, tuple)) and type(position) is int:
       return variable[position]
     else:
       raise Exception("Error: Variable is not list.")

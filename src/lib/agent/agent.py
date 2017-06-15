@@ -7,7 +7,7 @@ class State():
   transitions = []
   agent = None
 
-  def __init__(self, id: int, action, acceptable: bool, transitions: []):
+  def __init__(self, id, action, acceptable: bool, transitions: []):
     self.id = id
     self.action = action
     self.acceptable = acceptable
@@ -15,7 +15,7 @@ class State():
 
   def exec(self, param):
     statements = self.action.value
-    func_params = { 'entrada': param }
+    func_params = { 'entrada': param, 'agent': self.agent }
     local_memory = self._memory_manager.add_memory('FUNCTION', func_params)
 
     returned = None
@@ -48,20 +48,23 @@ class AbstractAgent():
   def __init__(self, alphabet_in: [], alphabet_out: [], states: []):
     self.alphabet_in = alphabet_in
     self.alphabet_out = alphabet_out
-    self.states = states
+
+    agent_states = []
+    for state in states:
+      st = State(state.id, state.action, state.acceptable, state.transitions)
+      st.setAgent(self)
+      agent_states.append(st)
+
+    self.states = agent_states
 
 
 class Agent(AbstractAgent):
 
-  name = None
   current_state = None
 
   def __init__(self, name: str, initial_state: int, states: []):
     super(self.__class__, self).__init__([], [], states)
     self.name = name
-
-    for state in self.states:
-      state.setAgent(self)
 
     current_state = list(filter(lambda x: x.id == initial_state, self.states))
 
@@ -95,6 +98,38 @@ class Agent(AbstractAgent):
         raise Exception('More than one State with ID ' + str(next_state))
 
       self.current_state = current_state[0]
+
+  def connect(self):
+    return 'Connected to 192.168.0.1'
+
+
+class AgentFactory():
+
+  def create_agents(self, quantity, childAgent, name, initial_state, states, auto_run):
+    children = []
+
+    for index in range(quantity):
+      agent_name = name + '_' + str(index)
+      child = childAgent(name, initial_state, states)
+      children.append(child)
+
+    if auto_run is True:
+      for child in children:
+        child.run()
+
+    return children
+
+  def runChildren(self, children):
+    results = []
+
+    for child in children:
+      if not isinstance(child, AbstractAgent):
+        raise Exception('Child is not an AbstractAgent object')
+
+      result = child.run()
+      results.append(result)
+
+    return (children, results)
 
 
 '''
