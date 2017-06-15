@@ -2,37 +2,40 @@ importar lib.agent.agent
 
 funcion action1(entrada)
   log("State 1: 10")
-  retorno (10)
+  retorno ("Doctor")
 end
 
 funcion action2(entrada)
-  print("State 2: " + str(entrada))
+  log("State 2: " + entrada)
   retorno (entrada)
 end
 
 funcion action3(entrada)
-  print("State 3: " + str(entrada))
+  log("State 3: " + entrada)
+  if (entrada == "Doctor") {
+    retorno(false)
+  }
   retorno(entrada + 10)
 end
 
 funcion action4(entrada)
-  print("State 4: " + str(entrada))
+  log("State 4: " + entrada)
   retorno(entrada)
 end
 
 funcion action5(entrada)
-  print("State 5: " + str(entrada))
+  log("State 5: " + entrada)
   retorno(entrada)
 end
 
-state1 = State(1, action1, false, [{ id: 2, condition: 15 },{ id: 3, condition: 10 }])
+state1 = State(1, action1, false, [{ id: 2, condition: false },{ id: 3, condition: "Doctor" }])
 state2 = State(2, action2, false, [])
 
-state3 = State(3, action3, false, [{ id: 4, condition: 30 },{ id: 5, condition: 20 }])
+state3 = State(3, action3, false, [{ id: 4, condition: 30 },{ id: 5, condition: false }])
 state4 = State(4, action4, false, [])
 state5 = State(5, action5, true, [])
 
 agent = Agent("Agente Suma", 1, [state1, state2, state3, state4, state5])
 
 result = agent.run()
-log("RESULT: " + str(result))
+log("RESULT: " + result)

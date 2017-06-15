@@ -11,12 +11,18 @@ import sys
 ##
 
 
-class TLONVariable__:
+class TLONVariable__():
   def __init__(self, name, value=None, kind='any', params={}):
     self.name = name
     self.kind = kind
     self.value = value
     self.params = params
+
+    try:
+      value._visitor = TLONVariable__._visitor
+      value._memory_manager = TLONVariable__._memory_manager
+    except:
+      pass
 
   def __eq__(self, other):
     if isinstance(other, str):
@@ -50,11 +56,7 @@ class TLONParameter__:
 # Defines class TLONLocalMemory__ to manage local variables in functions
 ##
 
-class TLONLocalMemory__:
-
-  name = None
-  depth = None
-  variables = None
+class TLONLocalMemory__():
 
   def __init__(self, name, depth, variables={}):
     self.name = name
@@ -146,18 +148,8 @@ class TLONGlobalMemory__():
   def __init__(self, local_memories=[]):
     self.memory_stack = []
 
-    if type(local_memories) is list:
-      if len(local_memories) > 0:
-        for memory in local_memories:
-          if isinstance(memory, TLONLocalMemory__):
-            self.memory_stack.append(memory)
-          else:
-            raise Exception('Error: Wrong type of Memory item.')
-      else:
-        main_memory = TLONLocalMemory__('Main', 0)
-        self.memory_stack.append(main_memory)
-    else:
-      raise Exception('Error: Wrong type of Memory item.')
+    main_memory = TLONLocalMemory__('Main', 0)
+    self.memory_stack.append(main_memory)
 
   def find(self, name):
     result = None

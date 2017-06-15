@@ -4,7 +4,7 @@ from core import *
 def main():
   print ('----- LangTLON v1.0 -----\n')
 
-  memory = TLONGlobalMemory__()
+  visitor = Visitor()
 
   if len(sys.argv) > 1:
     try:
@@ -17,7 +17,6 @@ def main():
     parser = TLONParser(token_stream)
     tree = parser.from_file()
 
-    visitor = Visitor(memory)
     visitor.visit(tree)
   else:
     while True:
@@ -42,7 +41,6 @@ def main():
       parser = TLONParser(token_stream)
       tree = parser.parse()
 
-      visitor = Visitor(memory)
       result = visitor.visit(tree)
 
       if result is not None:

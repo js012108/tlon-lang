@@ -18,10 +18,12 @@ class Visitor(TLONVisitor):
   value_returned = False
   line_error = -1
 
-  def __init__(self, memory_manager=TLONGlobalMemory__()):
-    self.memory_manager = memory_manager
+  def __init__(self):
+    self.memory_manager = TLONGlobalMemory__()
+    TLONVariable__._visitor = self
+    TLONVariable__._memory_manager = self.memory_manager
 
-  # Visit a parse tree produced by TLONParser#parse.
+    # Visit a parse tree produced by TLONParser#parse.
   def visitParse(self, ctx: TLONParser.ParseContext):
     if ctx.from_file is not None:
       return self.visit(ctx.from_file())
@@ -281,7 +283,7 @@ class Visitor(TLONVisitor):
 
     item = self.memory_manager.find(name)
 
-    a = 1
+    a = 2
 
     if item.kind == 'default' or (item.kind == 'any' and not (type(item.value) is int or type(item.value) is float or
                                                                   type(item.value) is str or type(item.value) is list or
@@ -300,10 +302,11 @@ class Visitor(TLONVisitor):
             raise Exception('FunctionError: Too few parameter to call function.')
 
         func = item.value
-        try:
-          return func(*params)
-        except Exception as e:
-          raise Exception('FunctionError: Builtin function throws error:', e)
+
+        #try:
+        return func(*params)
+        #except Exception as e:
+        #  raise Exception('FunctionError: Builtin function throws error:', e)
       else:
         item = item.value
     elif item.kind == 'user':
@@ -323,7 +326,7 @@ class Visitor(TLONVisitor):
         ########################################################
         # ERROR
         # Resolver problema con programacion funcional
-        # A veces se cambia el orden de los items en 'iem.params.items()'
+        # A veces se cambia el orden de los items en 'iem.params.items()' en python 3.4.2
         ########################################################
         for name, param in item.params.items():
           if len(params) <= index:
@@ -428,6 +431,8 @@ class Visitor(TLONVisitor):
       right = right.value
 
     if ctx.op.type == TLONParser.PLUS:
+      if isinstance(left, str) or isinstance(right, str):
+        return str(left) + str(right)
       return left + right
     if ctx.op.type == TLONParser.MINUS:
       return left - right

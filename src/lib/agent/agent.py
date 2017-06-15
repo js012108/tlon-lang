@@ -5,6 +5,7 @@ class State():
   output = None
   acceptable = None
   transitions = []
+  agent = None
 
   def __init__(self, id: int, action, acceptable: bool, transitions: []):
     self.id = id
@@ -13,15 +14,30 @@ class State():
     self.transitions = transitions
 
   def exec(self, param):
-    self.output = self.action(param)
+    statements = self.action.value
+    func_params = { 'entrada': param }
+    local_memory = self._memory_manager.add_memory('FUNCTION', func_params)
+
+    returned = None
+    for stat in statements:
+      value = self._visitor.visit(stat)
+
+      if type(value) is tuple and value[1] == 1:
+        self._memory_manager.pop_memory()
+        self.output = value[0]
+        break
+
     return self.output
 
   def validateTransitions(self):
     for transition in self.transitions:
-      if transition['condition'] == self.output:
-        return transition['id']
+      if transition['condition'].value == self.output:
+        return transition['id'].value
 
     return None
+
+  def setAgent(self, agent):
+    self.agent = agent
 
 
 class AbstractAgent():
@@ -43,6 +59,9 @@ class Agent(AbstractAgent):
   def __init__(self, name: str, initial_state: int, states: []):
     super(self.__class__, self).__init__([], [], states)
     self.name = name
+
+    for state in self.states:
+      state.setAgent(self)
 
     current_state = list(filter(lambda x: x.id == initial_state, self.states))
 
