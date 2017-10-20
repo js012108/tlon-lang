@@ -102,3 +102,6 @@ ENV/
 test/test_write.txt
 **/.idea
 !/src/core/grammar/TLON.g4
+
+#IOS Development
+*.DS_Store
