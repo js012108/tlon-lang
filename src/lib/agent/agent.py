@@ -1,4 +1,3 @@
-
 class State():
   id = None
   action = None

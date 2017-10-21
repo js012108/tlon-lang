@@ -1,1 +1,1 @@
-importar lib.test.__init__
+print("sss")
