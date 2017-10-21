@@ -31,7 +31,6 @@ end
 
 state1 = State("Init", action1, false, [{ id: "Callejon", condition: false },{ id: "Conexion", condition: "Doctor" }])
 state2 = State("Callejon", action2, false, [])
-
 state3 = State("Conexion", action3, false, [{ id: "Callejon 2", condition: 30 },{ id: "Terminal", condition: false }])
 state4 = State("Callejon 2", action4, false, [])
 state5 = State("Terminal", action5, true, [])
