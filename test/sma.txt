@@ -1,0 +1,8 @@
+importar mas.tlon.__init__
+
+funcion action1()
+    p = SingleActionAgent("action", 1)
+    p.start()
+end
+
+action1()

@@ -2,6 +2,7 @@ from antlr4 import *
 from core import *
 
 def main():
+
   print ('----- LangTLON v1.0 -----\n')
 
   visitor = Visitor()
