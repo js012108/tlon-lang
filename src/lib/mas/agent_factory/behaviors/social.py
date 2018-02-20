@@ -6,7 +6,7 @@ if IS_PY2:
 else:
     from queue import Queue
 
-from mas.tlon.agent_factory.abstract_agent import *
+from tlon.agent_factory.abstract_agent import *
 from random import randint
 from threading import Thread
 

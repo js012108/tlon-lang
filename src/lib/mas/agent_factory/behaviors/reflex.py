@@ -1,6 +1,6 @@
 import time
 import logging
-from mas.tlon.agent_factory.abstract_behavior import AbstractBehaviour
+from tlon.agent_factory.abstract_behavior import AbstractBehaviour
 
 
 class OneShotBehavior(AbstractBehaviour):

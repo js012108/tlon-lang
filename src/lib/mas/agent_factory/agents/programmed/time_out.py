@@ -1,6 +1,5 @@
-from mas.tlon.agent_factory.abstract_agent import *
-
-from mas.tlon.agent_factory.behaviors import *
+from tlon.agent_factory.abstract_agent import *
+from tlon.agent_factory.behaviors import *
 
 
 class TimeOutAgent(AbstractAgent):

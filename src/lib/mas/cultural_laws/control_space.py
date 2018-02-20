@@ -3,9 +3,9 @@
 
 import random
 
-from mas.tlon.agent_factory.agents.programmed.State import *
+from tlon.agent_factory.agents.programmed.State import *
 
-from mas.tlon.agent_factory.behaviors import *
+from tlon.agent_factory.behaviors import *
 
 BOARDS = {
     'SocialDilemmaMatrix': {(1, 1): (2, 2),

@@ -1,8 +1,9 @@
-from mas.tlon.agent_factory.abstract_behavior import AbstractBehaviour
+from tlon.agent_factory.abstract_behavior import AbstractBehaviour
 from transitions import *
 from transitions.extensions import GraphMachine
 import threading
 import logging
+import time
 
 #####################################################################
 
@@ -66,7 +67,36 @@ class FSM(AbstractBehaviour):
 
     def graph(self):
         pass
+    
+    # Define order on automatic transitions
+    def ordered_transitions(self, ordered_transitions=[]):
+        if ordered_transitions:
+            self._fsm.add_ordered_transitions(ordered_transitions)
+        else:
+            self._fsm.add_ordered_transitions()
 
-    def automaticRun(self, timeTransition):
-        pass
+    # Make transitions between states automatically every so often
+    def run_with_timer(self, timeTransition=0, timeRunning=0):
+        initial_time = time.time()
+        total_time = 0
+        while total_time < timeRunning:
+            if time.time() - initial_time > timeTransition:
+                self.next_state()
+                print(self.state)
+                initial_time = time.time()
+                total_time += timeTransition
+    
+    # The agent percieve keyboar input until end string is send
+    def perceive_text_input(self):
+        txt_input = open("reflex_agents_input.txt", "r")
+        for line in txt_input:
+            line = line.strip()
+            print(line)
+            eval(line)
+               
+
+
+        
+
+    
 

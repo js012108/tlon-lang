@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 import sys
 sys.path.append('../..')
-from mas.tlon.communication.socket_methods import *
-from mas.tlon.natural_laws.constants import *
-from mas.tlon.cultural_laws.control_space import *
-from mas.tlon.cultural_laws.games.games import *
-from mas.tlon.resources.resources import *
+from tlon.communication.socket_methods import *
+from tlon.natural_laws.constants import *
+from tlon.cultural_laws.control_space import *
+from tlon.cultural_laws.games.games import *
+from tlon.resources.resources import *
 from threading import Thread
 import logging
 import socket

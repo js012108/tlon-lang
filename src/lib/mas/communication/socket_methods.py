@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from mas.tlon.world import *
+from tlon.world import *
 
 
 def receive_end(the_socket):

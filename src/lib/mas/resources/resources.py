@@ -7,7 +7,7 @@ import subprocess
 
 import psutil as ps
 
-from mas.external_communication.utilities import *
+from lib.utilities import *
 
 
 def get_ipv4_interface():
