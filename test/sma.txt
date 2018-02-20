@@ -1,4 +1,4 @@
-importar mas.tlon.__init__
+importar mas.__init__
 
 funcion action1()
     p = SingleActionAgent("action", 1)
