@@ -1,7 +1,7 @@
 importar mas.__init__
 
-funcion action1()
-    p = PingAgent("action", 1, "www.google.com")
+funcion action1()    
+    p = PingAgent("action",1, "www.google.com")
     p.start()
 end
 
