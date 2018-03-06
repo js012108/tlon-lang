@@ -15,26 +15,27 @@ class SingleActionAgent(AbstractAgent):
 		b.start()
 		b.join()
 
+class PingServer(OneShotBehavior):
+
+    def _init_(self, hostname):
+        OneShotBehavior._init_(self)
+        self.hostname = hostname
+
+    def _single_action(self):
+        response = os.system("ping -c 1 " + self.hostname)
+        if response == 0:
+            print(self.hostname, 'is up!')
+        else:
+            print(self.hostname, 'is down!')
+
 class PingAgent(AbstractAgent):
 
-	def __init__(self,  identifier, description, hostname):
-		AbstractAgent.__init__(self, identifier, description)
-		self.hostname = hostname
+    def _init_(self,  identifier, description, hostname):
+        AbstractAgent._init_(self, identifier, description)
+        self.behavior1 = PingServer(hostname=hostname)
 
-	def get_hostname(self):
-		return self.hostname
-
-	class PingServer(OneShotBehavior):
-
-		def _single_action(self, hostname='google.com'):
-			response = os.system("ping -c 1 " + hostname)
-			if response == 0:
-				print(hostname, 'is up!')
-			else:
-				print(hostname, 'is down!')
-
-	def _setup(self):
-		behaviour = self.PingServer()
-		self.add_behaviour(behaviour)
-		behaviour.start()
-		behaviour.join()
+    def _setup(self):
+        behaviour = self.behavior1
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
