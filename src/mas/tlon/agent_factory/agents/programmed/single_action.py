@@ -17,8 +17,8 @@ class SingleActionAgent(AbstractAgent):
 
 class PingAgent(AbstractAgent):
 
-	def __init__(self, description, hostname):
-		AbstractAgent.__init__(self, description)
+	def __init__(self,  identifier, description, hostname):
+		AbstractAgent.__init__(self, identifier, description)
 		self.hostname = hostname
 
 	def get_hostname(self):
