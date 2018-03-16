@@ -86,7 +86,8 @@ accessarray
 
 variable
  : ID (POINT ID)* (OPAR (expr (COMMA expr)*)? CPAR)?
- ;
+ | ID (POINT ID)* OKEY expr CKEY
+ ; 
 
 parametro
  : ID (ASSIGN expr)?

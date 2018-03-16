@@ -82,7 +82,6 @@ class Visitor(TLONVisitor):
       value = self.visit(ctx.assigment())
 
     self.memory_manager.assign(name, value)
-
     return value
 
   # Visit a parse tree produced by TLONParser#if_stat.
@@ -185,7 +184,7 @@ class Visitor(TLONVisitor):
     local_memory = self.memory_manager.peek_memory()
 
     funcion = TLONVariable__(name, value, kind, parameters)
-    local_memory.assign(name, funcion)
+    local_memory.assign(name, funcion,None)
 
     return funcion
 
@@ -199,7 +198,7 @@ class Visitor(TLONVisitor):
     for name, attribute in mod.__dict__.items():
       if not name.startswith('__'):
         var = TLONVariable__(name, attribute, 'default')
-        global_mem.assign(name, var)
+        global_mem.assign(name, var,None)
 
     return mod
 
@@ -275,6 +274,19 @@ class Visitor(TLONVisitor):
     else:
       raise Exception("Error: Variable is not list.")
 
+      # Visit a parse tree produced by TLONParser#dimamicarray.
+    def visitDimamicarray(self, ctx:TLONParser.DimamicarrayContext):
+        name = str(ctx.variable().getText())
+    value = None
+
+    if ctx.expr() is not None:
+      value = self.visit(ctx.expr())
+    elif ctx.assignment() is not None:
+      value = self.visit(ctx.assigment())
+
+    self.memory_manager.assign(name, value)
+
+    return value
   # Visit a parse tree produced by TLONParser#variable.
   def visitVariable(self, ctx: TLONParser.VariableContext):
     name = ctx.ID()
@@ -282,8 +294,6 @@ class Visitor(TLONVisitor):
     name = '.'.join(list(map(lambda x: x.getText(), name)))
 
     item = self.memory_manager.find(name)
-
-    a = 2
 
     if item.kind == 'default' or (item.kind == 'any' and not (type(item.value) is int or type(item.value) is float or
                                                                   type(item.value) is str or type(item.value) is list or

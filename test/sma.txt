@@ -1,8 +1,37 @@
-importar mas.__init__
+log("for,if")
+r = [0,1,2]
+x = [1,3,6]
+y = [1494, 2578, 5614]
+X = 0
 
-funcion action1()    
-    p = PingAgent("action",1, "www.google.com")
-    p.start()
+px = 0
+for i in r{
+    l = y[i]
+    for j in r{
+            if (j != i){
+                l = l * ((X - x[j]) / (x[i] - x[j]))
+            }
+    }
+    log(l)
+    px = px + l
+
+}
+log(px)
+log("while")
+
+cond = true
+while cond{
+   for i in r{
+       log(i)
+       if i==2{
+            cond= false
+       }
+   }
+}
+log("funciones")
+
+funcion mult(h,l)
+    retorno h*l
 end
 
-action1()
+log(mult(4,5))

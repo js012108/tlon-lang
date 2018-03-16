@@ -122,16 +122,48 @@ class TLONLocalMemory__():
 
     return result
 
-  def assign(self, name, obj):
-    var = self.find(name)
-
+  def assign(self, name, obj,memory_stack):
+    tmpName = None
+    if (name.count('[') > 0):
+      tmpName = name[:name.index('[')]
+    else:
+      tmpName = name
+    var=None
+    #var = self.find(tmpName)
+    if memory_stack:
+        for memory in reversed(memory_stack):
+          try:
+            var = memory.find(tmpName)
+            if var!=None:
+                break
+          except Exception as e:
+            raise e
+    else:
+        var = self.find(tmpName)
     if var is None:
       if isinstance(obj, TLONVariable__):
         self.variables[name] = obj
       else:
         self.variables[name] = TLONVariable__(name, obj, 'default')
     else:
-      var.set_value(obj)
+      if (tmpName == name):
+        var.set_value(obj)
+      else:
+        idxtemp = name[name.index('[') + 1:name.index(']')]
+        index = None
+        if memory_stack:
+            for memory in reversed(memory_stack):
+              index = memory.find(idxtemp)
+              if index!=None:
+                  break
+        if (isinstance(index, TLONVariable__)):
+            index = index.value
+        else:
+            index = idxtemp
+        if (isinstance(obj, TLONVariable__)):
+          var.value[int(index)] = obj.value
+        else:
+          var.value[int(index)] = obj
 
   def getVariables(self):
     return self.variables
@@ -183,7 +215,7 @@ class TLONGlobalMemory__():
 
       local_memory = self.peek_memory()
 
-      local_memory.assign(name, obj)
+      local_memory.assign(name, obj,self.memory_stack)
     else:
       var.set_value(obj)
 
