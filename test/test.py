@@ -1,4 +1,5 @@
-def fn(text):
+#Solo funciona con texto sin espacios y sin caracteres alfanumericos que no inicien con numeros
+def generate_state_machine(text):
     states=list(text)
     transitions = []
     i = 0
@@ -6,11 +7,12 @@ def fn(text):
         trigger = states[i]+"to"+states[i+1]
         transition = { 'dest':states[i+1], 'source':states[i], 'trigger':trigger}
         transitions.append(transition)
-        print(trigger)
-        print(transition)
         i += 1
-    print(transitions)
 
-    
+def validate_text(text):
+    for letter in text:
+        eval(text[0]+"to"+"text[1]")
 
-fn("abcdefg")
+#El agente tiene que crear una maquina de estados y tiene que reconocer si una entrada es aceptable o no
+
+generate_state_machine("abcdefg")
