@@ -271,9 +271,9 @@ class OneStringDetector(AbstractAgent):
     def __init__(self, description, community_id='', string=''):
         AbstractAgent.__init__(self, description, community_id)
         self.string = string
-        states = []
-        transitions = []
-        self.FSM = None
+        self.states = []
+        self.transitions = []
+        self.fsm = None
     
     def generate_transitions(self):
         if  self.string:
@@ -290,8 +290,11 @@ class OneStringDetector(AbstractAgent):
         
     
     #Return true if given string is the same as the stored one
-    def validateString(self):
-        TODO
+    def validateString(self, text):
+        i=0
+        while(i<len(text)-1):        
+            eval('self.fsm.'+text[i]+'to'+text[i+1]+'()')
+            i += 1
 
     #Change the stored string
     def updateString(self):
@@ -299,5 +302,8 @@ class OneStringDetector(AbstractAgent):
 
     def _setup(self):
         transitions = self.generate_transitions()
-        print(self.transitions)
-        print(self.states)
+        self.fsm = FiniteStateMachine(states=self.states, transitions=self.transitions, initial=self.states[0])
+        self.add_behaviour(self.fsm)
+        self.fsm.start()
+        self.fsm.join()
+        self.validateString("someRandomText")
