@@ -292,8 +292,12 @@ class OneStringDetector(AbstractAgent):
     #Return true if given string is the same as the stored one
     def validateString(self, text):
         i=0
-        while(i<len(text)-1):        
-            eval('self.fsm.'+text[i]+'to'+text[i+1]+'()')
+        while(i<len(text)-1):            
+            try: 
+                eval('self.fsm.'+text[i]+'to'+text[i+1]+'()')
+            except:
+                print("Letter " + text[i+1] + " after letter " + text[i] + " is not recognized by this agent")
+                return
             i += 1
 
     #Change the stored string
@@ -306,4 +310,4 @@ class OneStringDetector(AbstractAgent):
         self.add_behaviour(self.fsm)
         self.fsm.start()
         self.fsm.join()
-        self.validateString("someRandomText")
+        self.validateString("someRandmText")
