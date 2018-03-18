@@ -1,6 +1,6 @@
 importar mas.__init__
 funcion mult()
-    p=PingAgent("",1, "www.google.com")
+    p=OneStringDetector("",1, "someRandomText")
     p.start()
 end
 
