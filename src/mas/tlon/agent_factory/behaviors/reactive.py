@@ -93,10 +93,3 @@ class FSM(AbstractBehaviour):
             line = line.strip()
             print(line)
             eval(line)
-               
-
-
-        
-
-    
-

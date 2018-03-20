@@ -32,10 +32,35 @@ class PingAgent(AbstractAgent):
 
     def __init__(self,  identifier, description, hostname):
         AbstractAgent.__init__(self, identifier, description)
-        self.behavior1 = PingServer(hostname)
+        self.behavior = PingServer(hostname)
 
     def _setup(self):
-        behaviour = self.behavior1
+        behaviour = self.behavior
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()
+
+"""Agent that executes humidity and temperature measurement from python2"""
+
+class ExecuteScript(OneShotBehavior):
+
+    def __init__(self, script):
+        OneShotBehavior.__init__(self)
+        self.script = script
+
+    def _single_action(self):
+        response = os.system("python " + "test/" + self.script)
+        print(response)
+
+class MeasurementAgent(AbstractAgent):
+    
+    def __init__(self,  identifier, description ):
+        AbstractAgent.__init__(self, identifier, description)
+        self.behaviour = ExecuteScript("scripts/measure_taker.py")
+    
+    def _setup(self):
+        self.add_behaviour(self.behaviour)
+        self.behaviour.start()
+        self.behaviour.join()
+
+
