@@ -21,7 +21,6 @@ class CycleAgent(AbstractAgent):
 		b.start()
 		b.join()
 
-
 class CycleCallBash(AbstractAgent):
 
 	class Periodic(PeriodicBehaviour):

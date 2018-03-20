@@ -50,7 +50,6 @@ class ExecuteScript(OneShotBehavior):
 
     def _single_action(self):
         response = os.system("python " + "test/" + self.script)
-        print(response)
 
 class MeasurementAgent(AbstractAgent):
     

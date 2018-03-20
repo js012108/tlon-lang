@@ -1,0 +1,4 @@
+self.atob()
+self.btoc()
+self.ctoa()
+print(self.state)
