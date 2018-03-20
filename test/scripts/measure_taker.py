@@ -1,3 +1,5 @@
+x = 20
+
 from platform import system as system_name
 from os import system as system_call
 import socket, datetime, gps, sys, time, Adafruit_DHT, requests
@@ -36,15 +38,17 @@ def gps():
             x= 0
 
 try:
-	# Ciclo principal infinito
-	while True:
-		humedad, temperatura = Adafruit_DHT.read_retry(sensor, pin)
-		gps()
-		#r = requests.post("http://www.bitsobet.com/maps/", data={'temp': temperatura, 'hum': humedad, 'longitud' : lon, 'latitud' : lat, 'humsuelo' : 0, 'precipitacion' : 6, 'datemed' : time})
+    # Ciclo principal infinito
+    i = 0
+    while i<x:
+        humedad, temperatura = Adafruit_DHT.read_retry(sensor, pin)
+        gps()
+        #r = requests.post("http://www.bitsobet.com/maps/", data={'temp': temperatura, 'hum': humedad, 'longitud' : lon, 'latitud' : lat, 'humsuelo' : 0, 'precipitacion' : 6, 'datemed' : time})
         print(temperatura, humedad, lon, lat)
+        i += 1
 
 
 # Se ejecuta en caso de que falle alguna instruccion dentro del try
 except Exception,e:
-	# Imprime en pantalla el error e
-	print str(e)
+    # Imprime en pantalla el error e
+    print str(e)

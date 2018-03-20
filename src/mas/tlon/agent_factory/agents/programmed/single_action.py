@@ -54,11 +54,21 @@ class ExecuteScript(OneShotBehavior):
 
 class MeasurementAgent(AbstractAgent):
     
-    def __init__(self,  identifier, description ):
+    def __init__(self,  identifier, description, times):
         AbstractAgent.__init__(self, identifier, description)
         self.behaviour = ExecuteScript("scripts/measure_taker.py")
+        self.times = times
+        self.script = "scripts/measure_taker.py"
+    
+    def updateScript(self):
+        with open('test/' + self.script, 'r') as file:
+            data = file.readlines()
+        data[0]='x = ' + str(self.times) + '\n'
+        with open('test/' + self.script, 'w') as file:
+            file.writelines( data )
     
     def _setup(self):
+        self.updateScript()
         self.add_behaviour(self.behaviour)
         self.behaviour.start()
         self.behaviour.join()

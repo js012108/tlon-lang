@@ -1,7 +1,17 @@
 importar mas.__init__
+
 funcion mult()
-    p = MeasurementAgent(1, "someRandomText")
-    p.start()
+    x = MeasurementAgent(1, "someRandomText", 20)
+    x.start()
 end
+
+funcion stringD()
+    p = OneStringDetector("", 1, "xxx")
+    p.start()
+    retorno(p)
+end
+
+#sleep(5)
+#zzz = stringD()
 
 mult()
