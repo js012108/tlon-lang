@@ -2,6 +2,7 @@ importar mas.__init__
 funcion mult()
     p=OneStringDetector("",1, "someRandomText")
     p.start()
+    p.validateString("xxx")
 end
 
 mult()

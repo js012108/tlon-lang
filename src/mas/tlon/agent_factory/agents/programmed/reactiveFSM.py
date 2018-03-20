@@ -172,87 +172,6 @@ class BetPayer(AbstractAgent):
         fsm_behaviour.start()
         fsm_behaviour.join()
 
-
-"""Agent capable of meassure temperature with a DHT11 sensor from a raspberry making samples and sending results to a webservice"""
-
-class  HTDetector(AbstractAgent):
-
-    def __init__(self, description, community_id='', ws='', pin=23):
-        AbstractAgent.__init__(self, description, community_id)
-        self.ws = ws
-        self.pin = pin
-
-    class FiniteStateMachine(FSM):
-
-        def on_start(self):
-            print("Starting HTDetector behavior as FSM . . .")
-
-        def on_end(self):
-            print("Ending HTDetector behavior as FSM. . .")
-    
-    """ Return true if OS of the host is raspbian """
-    """ TODO """
-    """ higly recommended create a general function for agents that return the host SO, is necessary for TLON proyect """
-    def validate_os(self):
-        try:
-            import RPi.GPIO as gpio
-            return True
-        except:
-            return False
-
-    def configureDevice(self, ws):
-        """Configure the device"""
-
-    def _setup(self):
-        if(self.validate_os()):
-            #Verfiy if required libraries are installed in host
-            try:
-                import sys
-                import time
-                import Adafruit_DHT
-                import requests
-            except ImportError:
-                print("One or more libraries can't be loaded")
- 
-            states=['Inicio','TomarMedida','EnviarMedida','Terminar']
-            transitions = [
-                { 'trigger': 'ConfiguracionTerminada', 'source': 'Inicio', 'dest': 'TomarMedida' },
-                { 'trigger': 'ProcesadoConjunto', 'source': 'TomarMedida', 'dest': 'EnviarMedida' },
-                { 'trigger': 'Apagar', 'source': 'Inicio', 'dest': 'Terminar' },
-                { 'trigger': 'Apagar', 'source': 'TomarMedida', 'dest': 'Terminar' },
-                { 'trigger': 'Apagar', 'source': 'EnviarMedida', 'dest': 'Terminar' },
-                { 'trigger': 'MedirDeNuevo', 'source': 'EnviarMedida', 'dest': 'TomarMedida' },
-                { 'trigger': 'ContinuarMidiendo', 'source': 'TomarMedida', 'dest': 'TomarMedida' }
-            ]
-            fsm_behaviour = self.FiniteStateMachine(states=states, transitions=transitions, initial=states[0])
-            self.add_behaviour(fsm_behaviour)
-            self.configureDevice(self.ws)
-
-            try:
-                self.sensor = Adafruit_DHT.DHT11
-            except Exception:
-                print("OS or libraries error")
-            r = requests.post( ws, data={'number': 12524, 'type': 'issue', 'action': 'show'})
-            print(r.status_code, r.reason)
-
-            #Try to meassure temperature and humidity, then send it to ws
-            try:
-                while True:
-                    humidity, temperature = Adafruit_DHT.read_retry(sensor, self.pin)
-                    print('Temperature={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
-                    r = requests.get( ws, data={'temp': temperature, 'hum': humidity})
-                    print(r.status_code, r.reason)
-                    time.sleep(10)
-
-            except Exception:
-                print("Error sending information to destiny service")
-
-            fsm_behaviour.start()
-            fsm_behaviour.join()
-
-        else:
-            print("The host device can´t run this function")
-
 #Agent capable of recognize a chain string
 
 class FiniteStateMachine(FSM):
@@ -263,9 +182,6 @@ class FiniteStateMachine(FSM):
     def on_end(self):
         print("Endng FSM ...")
     
-    def fsm_action(self):
-        self.perceive_text_input()
-
 class OneStringDetector(AbstractAgent):
 
     def __init__(self, description, community_id='', string=''):
@@ -310,4 +226,134 @@ class OneStringDetector(AbstractAgent):
         self.add_behaviour(self.fsm)
         self.fsm.start()
         self.fsm.join()
-        self.validateString("someRandmText")
+    
+"""Agent capable of meassure temperature with a DHT11 sensor from a raspberry making samples and sending results to a webservice"""
+
+class  HTDetector(AbstractAgent):
+
+    def __init__(self, description, community_id='', ws='', pin=23):
+        AbstractAgent.__init__(self, description, community_id)
+        self.ws = ws
+        self.pin = pin
+
+    class FiniteStateMachine(FSM):
+
+        def on_start(self):
+            print("Starting HTDetector behavior as FSM . . .")
+
+        def on_end(self):
+            print("Ending HTDetector behavior as FSM. . .")
+    
+    """ Return true if OS of the host is raspbian """
+    """ TODO """
+    """ higly recommended create a general function for agents that return the host SO, is necessary for TLON proyect """
+    def validate_os(self):
+        try:
+            import RPi.GPIO as gpio
+            return True
+        except:
+            return False
+
+    def configureDevice(self, ws):
+        """Configure the device"""
+
+    def _setup(self):
+        if(self.validate_os()):
+            #Verfiy if required libraries are installed in host
+            try:
+                import sys
+                import time
+                import Adafruit_DHT
+                import requests
+            except ImportError:
+                print("One or more libraries can't be loaded")
+
+            states=['Inicio','TomarMedida','EnviarMedida','Terminar']
+            transitions = [
+                { 'trigger': 'ConfiguracionTerminada', 'source': 'Inicio', 'dest': 'TomarMedida' },
+                { 'trigger': 'ProcesadoConjunto', 'source': 'TomarMedida', 'dest': 'EnviarMedida' },
+                { 'trigger': 'Apagar', 'source': 'Inicio', 'dest': 'Terminar' },
+                { 'trigger': 'Apagar', 'source': 'TomarMedida', 'dest': 'Terminar' },
+                { 'trigger': 'Apagar', 'source': 'EnviarMedida', 'dest': 'Terminar' },
+                { 'trigger': 'MedirDeNuevo', 'source': 'EnviarMedida', 'dest': 'TomarMedida' },
+                { 'trigger': 'ContinuarMidiendo', 'source': 'TomarMedida', 'dest': 'TomarMedida' }
+            ]
+            fsm_behaviour = self.FiniteStateMachine(states=states, transitions=transitions, initial=states[0])
+            self.add_behaviour(fsm_behaviour)
+            self.configureDevice(self.ws)
+
+            try:
+                self.sensor = Adafruit_DHT.DHT11
+            except Exception:
+                print("OS or libraries error")
+            r = requests.post( ws, data={'number': 12524, 'type': 'issue', 'action': 'show'})
+            print(r.status_code, r.reason)
+
+            #Try to meassure temperature and humidity, then send it to ws
+            try:
+                while True:
+                    humidity, temperature = Adafruit_DHT.read_retry(sensor, self.pin)
+                    print('Temperature={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
+                    r = requests.get( ws, data={'temp': temperature, 'hum': humidity})
+                    print(r.status_code, r.reason)
+                    time.sleep(10)
+
+            except Exception:
+                print("Error sending information to destiny service")
+
+            fsm_behaviour.start()
+            fsm_behaviour.join()
+
+        else:
+            print("The host device can´t run this function")
+
+
+
+from platform import system as system_name
+from os import system as system_call
+import socket, datetime, gps, sys, time, Adafruit_DHT, requests
+
+session = gps.gps("localhost", "2947")
+session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
+sensor = Adafruit_DHT.DHT11
+pin = 23
+lat = 0
+lon = 0
+time = 0
+
+def gps():
+    x = 1
+    while x == 1:
+        report = session.next()
+        if report['class'] == 'TPV':
+            if hasattr(report, 'time'):
+                print ('Hora:      ' + str(report.time))
+                global time
+                time = str(report.time)
+            if hasattr(report, 'lat'):
+                print ('Latitud:   ' + str(report.lat))
+                global lat
+                lat = str(report.lat)
+            if hasattr(report, 'lon'):
+                print ('Longitud:  ' + str(report.lon))
+                global lon
+                lon = str(report.lon)
+            if hasattr(report, 'speed'):
+                print ('Velocidad: ' + str(report.speed))
+            if hasattr(report, 'track'):
+                print ('Rumbo:     ' + str(report.track))
+            if hasattr(report, 'head'):
+                print (report.head)
+            x= 0
+
+try:
+	# Ciclo principal infinito
+	while True:
+		humedad, temperatura = Adafruit_DHT.read_retry(sensor, pin)
+		gps()
+		r = requests.post("http://www.bitsobet.com/maps/", data={'temp': temperatura, 'hum': humedad, 'longitud' : lon, 'latitud' : lat, 'humsuelo' : 0, 'precipitacion' : 6, 'datemed' : time})
+
+# Se ejecuta en caso de que falle alguna instruccion dentro del try
+except e:
+	# Imprime en pantalla el error e
+	print(str(e), "pos no")
