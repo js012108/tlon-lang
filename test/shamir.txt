@@ -1,0 +1,96 @@
+importar random
+importar functools
+importar math
+importar scipy.interpolate
+
+aux=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+aux_polinomio=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+aux_polinomio_reversed=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+aux_puntos=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+
+x_values=[0, 0, 0]
+y_values=[0, 0, 0]
+
+funcion reversed(listas)
+    l=listas[0]
+    l2=listas[1]
+    for i in aux{
+        if (i<25){
+            var = 50-i-1
+            l2[i] = l[var]
+            l2[var] = l[i]
+        }
+    }
+   retorno(l2)
+end
+
+funcion evaluar(valores)
+    accum = 0
+    poly = valores[0]
+    x = valores[1]
+    size = valores[2]
+    for index in aux{
+        if (index<size){
+            temp = 50-index-1
+            coeff = poly[temp]
+            accum = accum + coeff*(x^index)
+        }
+    }
+    retorno(accum)
+end
+
+funcion make_random_shares(minimum_shares)
+    minimum = minimum_shares[0]
+    shares = minimum_shares[1]
+    if (minimum > shares){
+        log("el secreto es irrecuperable")
+        retorno ([false])
+    }
+    for i in aux{
+        if (i<minimum){
+            aux_polinomio[i]=floor(random()*1000)
+            aux_polinomio_reversed[i]=aux_polinomio[i]
+        }
+    }
+    aux_polinomio_reversed =  reversed([aux_polinomio,aux_polinomio_reversed])
+    for h in aux{
+        if (h<shares){
+            tuple =[h+1,0]
+            tuple[1] = evaluar([aux_polinomio_reversed,h+1,minimum])
+            aux_puntos[h]= tuple
+        }
+    }
+    retorno([true,aux_polinomio[0],aux_puntos])
+end
+
+funcion recuperar(attr)
+    puntos = attr[0]
+    num_puntos = attr[1]
+    for index in aux{
+        if (index<num_puntos){
+            tupla = puntos[index]
+            x_values[index]=tupla[0]
+            y_values[index]=tupla[1]
+        }
+    }
+    poly = lagrange(x_values,y_values)
+    retorno(poly)
+end
+
+secret_shares = make_random_shares([3,6])
+if secret_shares[0]{
+    log("Secreto")
+    log(secret_shares[1])
+    log("Puntos")
+    for index in secret_shares[2]{
+        if index[0]!=0{
+            log(index)
+        }
+    }
+}
+
+secreto = recuperar([secret_shares[2],3])
+log("Coeficientes del polinomio descendentes")
+for index in secreto{
+    log(index)
+}

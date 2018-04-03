@@ -127,7 +127,9 @@ class Visitor(TLONVisitor):
     if self.memory_manager.find(var) is not None:
       raise Exception("Error: Cannot use variable " + var + ". Already assigned.")
 
-    if type(items) is list:
+    try:
+      #validate if object is iterable
+      items_iterator = iter(items)
       for item in items:
         self.memory_manager.add_memory('FOR_STMT')
         self.memory_manager.assign(var, item)
@@ -136,7 +138,7 @@ class Visitor(TLONVisitor):
 
         if type(returned_value) is tuple and returned_value[1] == 1:
           return returned_value[0]
-    else:
+    except:
       raise Exception("Error: Variable is not iterable.")
 
     return None

@@ -5,18 +5,18 @@ export CLASSPATH=".:/usr/local/lib/antlr-4.7-complete.jar:$CLASSPATH"
 
 INPUT="test/sma.txt"
 if [[ -n "$2" ]]; then
-	INPUT="../$2"
+    INPUT="../$2"
 fi
 
 if [[ "$1" == "setup" ]]; then
     pip install -r requirements.txt
 elif [[ "$1" == "compile" ]]; then
     cd src/core/grammar
-	java org.antlr.v4.Tool -o ../ -no-listener -visitor -Dlanguage=Python3 TLON.g4
+    java org.antlr.v4.Tool -o ../ -no-listener -visitor -Dlanguage=Python3 TLON.g4
 elif [[ "$1" == "run" ]]; then
-    python3 src/main.py test/sma.txt
+    python3 src/main.py test/shamir.txt
 elif [[ "$1" == "clean" ]]; then
-	rm src/core/*.class src/core/*.java src/core/*.pyc src/core/TLON*.py src/core/*.tokens
+    rm src/core/*.class src/core/*.java src/core/*.pyc src/core/TLON*.py src/core/*.tokens
 else
-	echo "Error: Option '$1' not found"
+    echo "Error: Option '$1' not found"
 fi
