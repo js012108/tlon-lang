@@ -1,0 +1,8 @@
+importar mas.__init__
+
+funcion pinghost(hostname)
+    agent=PingAgent(1,"Agent pinging google",hostname)
+    agent.start()
+end
+
+resultPing = pinghost("www.google.com")
