@@ -1,0 +1,10 @@
+#Este agente ejecuta una funcion programada en su clase una unica vez, en este caso imprime un saludo
+
+importar mas.__init__
+
+funcion singleAction()
+    agent = SingleActionAgent(1,"Agent that do just one thing")
+    agent.start()
+end
+
+agent = singleAction()

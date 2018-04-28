@@ -1,8 +1,11 @@
+#Este agente hace ping a una ruta que se pase como tercer parametro una unica vez
+#Como respuesta nos dice si el servidor esta disponible o no
+
 importar mas.__init__
 
-funcion pinghost(hostname)
-    agent=PingAgent(1,"Agent pinging google",hostname)
+funcion pinghost(agentId, description, hostname)
+    agent = PingAgent(agentId, description, hostname)
     agent.start()
 end
 
-resultPing = pinghost("www.google.com")
+resultPing = pinghost(1, "This agent will ping google server" ,"www.google.com")

@@ -1,0 +1,10 @@
+# Ejecuta un script ubicado en la carpeta test que tenga el nombre que se pasa como tercer parametro
+
+importar mas.__init__
+
+funcion executeScript(scriptName)
+    agent = ExecuteScript(scriptName)
+    agent.start()
+end
+
+agent = executeScript("script.txt")
