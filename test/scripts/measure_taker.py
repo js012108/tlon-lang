@@ -1,4 +1,4 @@
-x = 20
+x = 10
 
 from platform import system as system_name
 from os import system as system_call
