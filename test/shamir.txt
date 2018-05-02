@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 02bf2b086b99651bf2c9dee5e3e270bab3abe345
 importar random
 importar functools
 importar math
@@ -94,4 +97,8 @@ secreto = recuperar([secret_shares[2],3])
 log("Coeficientes del polinomio descendentes")
 for index in secreto{
     log(index)
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 02bf2b086b99651bf2c9dee5e3e270bab3abe345

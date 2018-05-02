@@ -127,7 +127,9 @@ class Visitor(TLONVisitor):
     if self.memory_manager.find(var) is not None:
       raise Exception("Error: Cannot use variable " + var + ". Already assigned.")
 
-    if type(items) is list:
+    try:
+      #validate if object is iterable
+      items_iterator = iter(items)
       for item in items:
         self.memory_manager.add_memory('FOR_STMT')
         self.memory_manager.assign(var, item)
@@ -136,7 +138,7 @@ class Visitor(TLONVisitor):
 
         if type(returned_value) is tuple and returned_value[1] == 1:
           return returned_value[0]
-    else:
+    except:
       raise Exception("Error: Variable is not iterable.")
 
     return None
@@ -190,17 +192,31 @@ class Visitor(TLONVisitor):
 
   # Visit a parse tree produced by TLONParser#importar.
   def visitImportar(self, ctx: TLONParser.ImportarContext):
-    package_name = '.'.join([str(x.getText()) for x in ctx.ID()])
-    mod = import_module(package_name)
+    try:
+        mod=None
+        package_name = '.'.join([str(x.getText()) for x in ctx.ID()])
+        try:
+            mod = import_module(package_name)
+            global_mem = self.memory_manager.get_memory(0)
+            for name, attribute in mod.__dict__.items():
+                if not name.startswith('__'):
+                    var = TLONVariable__(name, attribute, 'default')
+                    global_mem.assign(name, var,None)
+        except:
+            if len((ctx.ID()))==2:
+                package_name = import_module(str(ctx.ID()[0]))
+                if str(ctx.ID()[1]) in package_name.__dict__:
+                    mod = getattr(package_name,str(ctx.ID()[1]))
+                    global_mem = self.memory_manager.get_memory(0)
+                    var = TLONVariable__(str(ctx.ID()[1]), mod, 'default')
+                    global_mem.assign(str(ctx.ID()[1]), var,None)
+                else:
+                    error = "No module named '" + str(ctx.ID()[1]) +"'; '"+ str(ctx.ID()[0]) + "' is not a package"
+                    raise Exception(error)
 
-    global_mem = self.memory_manager.get_memory(0)
-
-    for name, attribute in mod.__dict__.items():
-      if not name.startswith('__'):
-        var = TLONVariable__(name, attribute, 'default')
-        global_mem.assign(name, var,None)
-
-    return mod
+        return mod
+    except Exception as e:
+      print (e)
 
   # Visit a parse tree produced by TLONParser#retornar.
   def visitRetornar(self, ctx: TLONParser.RetornarContext):
