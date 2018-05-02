@@ -1,0 +1,10 @@
+# Agente que envia n veces un comando a la consola del sistema
+
+importar mas.__init__
+
+funcion callBash()
+    agent = CycleCallBash(1, "Send commands to bash")
+    agent.start()
+end
+
+agent = callBash()

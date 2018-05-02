@@ -1,7 +1,7 @@
 importar mas.__init__
 
 funcion timeOut()
-    agent = TimeOutAgent(1, "this agent with send data to a webservice")
+    agent = TimeOutAgent(1, "Count till time finish")
     agent.start()
 end
 

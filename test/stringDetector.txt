@@ -1,0 +1,11 @@
+# Detecta una cadena de texto dada inicialmente
+
+importar mas.__init__
+
+funcion stringDetector()
+    agent = OneStringDetector("Detect a given string", 2, "cadena")
+    agent.validateString("cadena")
+    agent.start()
+end
+
+agent = stringDetector()
