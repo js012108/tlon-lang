@@ -1,0 +1,35 @@
+.sidebar-background{
+	display:none;
+	top: auto;
+	left: auto;
+	
+}
+
+.primary-sidebar{
+	
+	display:none;
+}
+
+
+.main-content{
+	
+	margin-left:0px;
+	
+}
+
+.ui-autocomplete{
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color:#FFFFFF;
+}
+
+body .modal-imputacion {
+    /* new custom width */
+    width: 700px;
+    /* must be half of the width, minus scrollbar on the left (30px) */
+    margin-left: -320px;
+}
+
+.elemento-oculto{
+	display:none;
+}

@@ -1,0 +1,61 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}
+    Inicio
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+    <div class="widget">
+        <div class="widget-head">
+                <h4 class="heading"><i class="fa fa-pencil"></i></span> Listado de Medidas</h4></div>
+
+        <div class="widget-body">
+         <div class="tabla_medidas" align="center">
+
+               <div class="table-responsive">
+                   <table id="infoMedidas" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Temperatura</th>
+                                <th>Humedad relativa</th>
+                                <th>Longitud</th>
+                                <th>Latitud</th>
+                                <th>Humedad suelo</th>
+                                <th>Precipitación</th>
+                                <th>Fecha medición</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for med in medidas %}
+                            <tr>
+                                <td>{{med.pk}}</td>
+                                <td>{{med.temp}}</td>
+                                <td>{{med.hum}}</td>
+                                <td>{{med.longitud}}</td>
+                                <td>{{med.latitud}}</td>
+                                <td>{{med.humsuelo}}</td>
+                                <td>{{med.precipitacion}}</td>
+                                <td>{{med.datemed}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block js %}
+
+</script>
+{% endblock %}

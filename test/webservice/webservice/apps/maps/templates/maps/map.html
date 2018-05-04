@@ -1,0 +1,268 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+ <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" ></script>
+
+
+
+
+
+   <style>
+		#map {
+			width: 100%;
+			height: 700px;
+		}
+	</style>
+
+{% endblock styles %}
+
+{% block title %}
+    Mapas
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+  temperatura
+  <div id="maptemp" style="height: 300px;"></div><br>
+  humedad
+  <div id="maphum" style="height: 300px;"></div><br>
+  humedadsuelo
+  <div id="maphumsuelo" style="height: 300px;"></div>
+  precipitacion
+  <div id="mapprecipitacion" style="height: 300px;"></div>
+temperatura humedad precipitacion humedadsuelo <br>
+{% for punto in datos %}
+{{punto.temp}}  {{punto.hum}} {{punto.precipitacion}} {{punto.humsuelo}}<br>
+{% endfor %}
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+
+
+
+/*
+var map = L.map('maptemp').fitWorld();
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'your.mapbox.access.token'
+}).addTo(map);
+map.locate({setView: true, maxZoom: 18});
+function onLocationFound(e) {
+    var radius = e.accuracy / 2;
+
+    L.marker(e.latlng).addTo(map)
+        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+}
+
+map.on('locationfound', onLocationFound);
+function onLocationError(e) {
+    alert(e.message);
+}
+
+map.on('locationerror', onLocationError);
+*/
+
+//MAPA TEMPERATURA 1
+var mymap = L.map('maptemp').setView([4.6378, -74.08473], 18);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 20,
+id: 'mapbox.emerald',
+accessToken: 'your.mapbox.access.token'
+}).addTo(mymap);
+
+var datos = [
+    {% for punto in datos %}
+        {% if not forloop.first %},{% endif %}
+        {
+            temp: "{{ punto.temp }}",
+            hum: "{{ punto.hum }}",
+            latitud: "{{ punto.latitud }}",
+            longitud: "{{ punto.longitud }}",
+            humsuelo: "{{punto.humsuelo}}",
+            precipitacion: "{{punto.precipitacion}}"
+        }
+    {% endfor %}
+    ]
+
+for(i=0;i<datos.length;i++){
+  latitud = datos[i].latitud;
+  latitud = latitud.replace(",", ".");
+  longitud = datos[i].longitud;
+  longitud = longitud.replace(",", ".");
+  var circle = L.circle([latitud, longitud], {
+      stroke: false,
+      fillColor: temperature(parseFloat(datos[i].temp)),
+      fillOpacity: 0.5,
+      radius: 4
+  }).addTo(mymap);
+}
+
+//MAPA HUMEDAD 2
+var mymap2 = L.map('maphum').setView([4.6378, -74.08473], 18);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 20,
+id: 'mapbox.emerald',
+accessToken: 'your.mapbox.access.token'
+}).addTo(mymap2);
+
+for(i=0;i<datos.length;i++){
+  latitud = datos[i].latitud;
+  latitud = latitud.replace(",", ".");
+  longitud = datos[i].longitud;
+  longitud = longitud.replace(",", ".");
+  var circle = L.circle([latitud, longitud], {
+      stroke: false,
+      fillColor: humedad(parseFloat(datos[i].hum)),
+      fillOpacity: 0.5,
+      radius: 4
+  }).addTo(mymap2);
+}
+
+////MAPA HUMEDAD SUELO 3
+var mymap2 = L.map('maphumsuelo').setView([4.6378, -74.08473], 18);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 20,
+id: 'mapbox.emerald',
+accessToken: 'your.mapbox.access.token'
+}).addTo(mymap2);
+
+for(i=0;i<datos.length;i++){
+  latitud = datos[i].latitud;
+  latitud = latitud.replace(",", ".");
+  longitud = datos[i].longitud;
+  longitud = longitud.replace(",", ".");
+  var circle = L.circle([latitud, longitud], {
+      stroke: false,
+      fillColor: humedad(parseFloat(datos[i].humsuelo)),
+      fillOpacity: 0.5,
+      radius: 4
+  }).addTo(mymap2);
+}
+
+////MAPA PRECIPITACION 4
+var mymap3 = L.map('mapprecipitacion').setView([4.6378, -74.08473], 18);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 20,
+id: 'mapbox.emerald',
+accessToken: 'your.mapbox.access.token'
+}).addTo(mymap3);
+
+for(i=0;i<datos.length;i++){
+  latitud = datos[i].latitud;
+  latitud = latitud.replace(",", ".");
+  longitud = datos[i].longitud;
+  longitud = longitud.replace(",", ".");
+  var circle = L.circle([latitud, longitud], {
+      stroke: false,
+      weight: 1,
+      fillColor: precipitacion(parseFloat(datos[i].precipitacion)),
+      fillOpacity: 0.8,
+      radius: 4
+  }).addTo(mymap3);
+}
+
+
+function temperature(temp) {
+  faren = (9/5*temp)+32;
+  color='#f03';
+  if (faren<=30){
+    color='#EA89F1';
+  }else if(faren>30 && faren<=40){
+    color='#B054B6';
+  }else if(faren>40 && faren<=50){
+    color='#5E1AA2';
+  }else if(faren>50 && faren<=60){
+    color='#0F62BC';
+  }else if(faren>60 && faren<=70){
+    color='#00D7DB';
+  }else if(faren>70 && faren<=80){
+    color='#06C901';
+  }else if(faren>80 && faren<=90){
+    color='#E0E505';
+  }else if(faren>90 && faren<=100){
+    color='#FCBA03';
+  }else if(faren>100 && faren<=110){
+    color='#EE3407';
+  }else if(faren>110){
+    color='#AA0D02';
+  }
+  return color;
+}
+
+function humedad(hum) {
+  color='#f03';
+  if (hum<=10){
+    color='#240403';
+  }else if(hum>10 && hum<=20){
+    color='#4D3310';
+  }else if(hum>20 && hum<=30){
+    color='#7D6B10';
+  }else if(hum>30 && hum<=40){
+    color='#A39F42';
+  }else if(hum>40 && hum<=50){
+    color='#BDBF4D';
+  }else if(hum>50 && hum<=60){
+    color='#D4D945';
+  }else if(hum>60 && hum<=70){
+    color='#7DDA2F';
+  }else if(hum>70 && hum<=80){
+    color='#5DB842';
+  }else if(hum>80 && hum<=90){
+    color='#38A139';
+  }else if(hum>90 && hum<=100){
+    color='#316E3C';
+  }
+  return color;
+}
+
+function precipitacion(prec) {
+  color='#f03';
+  if (prec<=-100){
+    color='#5F4C26';
+  }else if(prec>-100 && prec<=-80){
+    color='#9E7834';
+  }else if(prec>-80 && prec<=-60){
+    color='#AF8C4B';
+  }else if(prec>-60 && prec<=-40){
+    color='#BFA068';
+  }else if(prec>-40 && prec<=-20){
+    color='#CFB790';
+  }else if(prec>-20 && prec<=0){
+    color='#DECAA8';
+  }else if(prec>0 && prec<=20){
+    color='#C2BEFE';
+  }else if(prec>20 && prec<=40){
+    color='#9595EE';
+  }else if(prec>40 && prec<=60){
+    color='#6C6AE4';
+  }else if(prec>60 && prec<=80){
+    color='#4040D3';
+  }else if(prec>80 && prec<=100){
+    color='#1615B4';
+  }else if(prec>100){
+    color='#01005C';
+  }
+  return color;
+}
+
+
+
+</script>
+{% endblock %}

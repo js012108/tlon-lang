@@ -1,0 +1,9 @@
+.sidebar-menu,
+.main-sidebar .user-panel,
+.sidebar-menu > li.header {
+  white-space: normal !important;
+}
+
+.box {
+  border-radius: 0;
+}

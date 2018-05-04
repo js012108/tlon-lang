@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<title>Agricori | Inicio</title>
+<link rel="icon" href="{% static '/img/favicon.ico' %}" type="image/x-icon" />
+<link rel="stylesheet" href="{% static 'index/css/index.css' %}">
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
+
+<nav id="menu">
+        <ul>
+         <li class="rocket"><a href="{% url 'maps:crops'%}">Cargar medida</a></li>
+         <li class="wine"><a href="{% url 'maps:massive_upload'%}">Carga masiva</a></li>
+         <li class="burger"><a href="{% url 'maps:map'%}">Mapas</a></li>
+         <li class="comment"><a href="{% url 'maps:crops'%}">Administrar cultivos</a></li>
+         <li class="sport" ><a href="{% url 'maps:irrigation'%}">Riego</a></li>
+         <li class="earth"><a href="{% url 'maps:support'%}">Soporte</a></li>
+     <div class="current">
+       <div class="top-arrow"></div>   
+       <div class="current-back"></div>
+       <div class="bottom-arrow"></div>
+     </div>
+       </ul>
+</nav>
+
+
+<script src="{% static 'index/js/index.js' %}"></script>

@@ -1,0 +1,108 @@
+{% load staticfiles %}
+
+<header class="main-header">
+
+    <!-- Logo -->
+    <a href="/index/menu" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        <span class="logo-mini"><b>A</b>C</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg"><b>A</b>gricori</span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top"   role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <!-- Navbar Right Menu -->
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+                {% for option in header.options %}
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            {{ option.name }}<i class="caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+                                    {% for opt in option.options %}
+                                        <li>
+                                            <a href="{{ opt.url }}">
+                                                <i class="fa fa-angle-right"></i> {{ opt.name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                {% endfor %}
+
+                <!-- User Account: style can be found in dropdown.less -->
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      {% if user.is_authenticated %}
+                        {% if user.userprofile.image %}
+                          <img src="{{ user.userprofile.image.url }}" class="user-image" alt="User Image">
+                        {% else %}
+                          <img src="{% static 'img/user2-160x160.jpg' %}" class="user-image" alt="User Image">
+                        {% endif %}
+                        {% if user.get_full_name %}
+                          <span class="hidden-xs">{{user.get_full_name}}</span>
+                        {% else %}
+                          <span class="hidden-xs">{{ user.get_username }}</span>
+                        {% endif %}
+                      {% endif %}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!-- User image -->
+                        <li class="user-header">
+                          {% if user.is_authenticated %}
+                          {% if user.userprofile.image %}
+                            <img src="{{ user.userprofile.image.url }}" class="img-circle" alt="User Image">
+                          {% else %}
+                            <img src="{% static 'img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
+                          {% endif %}
+                            <p>
+                              {% if user.get_full_name %}
+                                {{user.get_full_name}} - {{ user.get_username }}
+                              {% else %}
+                                {{ user.get_username }}
+                              {% endif %}
+                                <small>{{ user.email }}</small>
+                            </p>
+                          {% endif %}
+                        </li>
+                        <!-- Menu Footer-->
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="#" class="btn btn-default btn-flat">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+  </header>
+  <div>
+             <br>
+ {% if static_menu %}
+    <div align="center">
+    {% for button in static_menu.buttons %}
+        <a href="{{button.href}}" class="btn {{button.aux_class}}">
+            <i class="{{button.class}}"></i> {{button.name}}
+        </a>
+    {% endfor %}
+{% endif %}
+      
+  </div>
+

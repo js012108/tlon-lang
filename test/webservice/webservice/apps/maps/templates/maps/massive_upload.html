@@ -1,0 +1,120 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'maps/css/massive_upload.css' %}">
+{% endblock styles %}
+
+{% block title %}
+    Carga Masiva de Datos
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+    <br>
+    <div class="row">
+        <div class="col-xs-12 col-sm-4">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-upload"></i> Carga mediciones de manera masiva</h3>
+                </div>
+                <div class="box-body" id="basecertificada-box">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <form class="form" id="basecertificada-form" action="/programas-sociales/sisben/base-certificada" enctype="multipart/form-data" method="post">
+                                {% csrf_token %}
+                                <p>A continuación, seleccione el archivo que desea cargar.</p>
+                                <div class="form-group">
+                                    <input type="file" name="file">
+                                    Debe ser un archivo en formato xlsx.
+                                </div>
+                                <br>
+                                <div class="text-center col-xs-12">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Cargar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br>
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible text-center" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>Error!</strong> {{ error }}
+                        </div>
+                    {% endif %}
+                    {% if message %}
+                        <div class="alert alert-success alert-dismissible text-center" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>Mensaje!</strong> {{ message }}
+                        </div>
+                    {% endif %}
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-8">
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-list"></i> Bases Certificadas</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-bordered table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Creador</th>
+                                        <th class="text-center">Fecha migración</th>
+                                        <th class="text-center">Fecha creación</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if migraciones %}
+                                    {% for migracion in migraciones %}
+                                        <tr class="text-center">
+                                            <td>{{ migracion.id }}</td>
+                                            <td>{{ migracion.id_usuario_creado }}</td>
+                                            {% if migracion.fecha_migracion %}
+                                                <td>{{ migracion.fecha_migracion }}</td>
+                                            {% else %}
+                                                <td></td>
+                                            {% endif %}
+                                            <td>{{ migracion.fecha_creacion }}</td>
+                                            <td>
+                                                {% if not migracion.fecha_migracion %}
+                                                    <a href="/programas-sociales/sisben/base-certificada/{{ migracion.id }}" class="btn btn-xs btn-primary migration-btn">Migrar</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="alert alert-info">
+                                                    <p><b>Sin registros!</b> No se han subido cargado migraciones a la base de datos.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'js/siprosoar/base_certificada.js' %}"></script>
+{% endblock %}

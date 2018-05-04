@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}
+    Inicio
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+
+<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Crear" />
+</form>
+
+{% endblock content %}
+
+{% block js %}
+
+</script>
+{% endblock %}

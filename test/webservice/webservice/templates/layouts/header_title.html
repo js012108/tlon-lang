@@ -1,0 +1,21 @@
+{% if header %}
+    <section class="content-header">
+        <h1>
+            {{ header.title }}
+            <small>{{ header.subtitle }}</small>
+        </h1>
+
+        {% if header.breadcrumbs %}
+            <ol class="breadcrumb">
+                {% for link in header.breadcrumbs %}
+                    {% if link.url %}
+                        <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+                    {% else %}
+                        <li class="active">{{ link.name }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        {% endif %}
+        <div class="clearfix"></div>
+    </section>
+{% endif %}

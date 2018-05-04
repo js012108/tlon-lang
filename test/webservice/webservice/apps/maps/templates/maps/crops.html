@@ -1,0 +1,79 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+ <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" ></script>
+   <style>
+		#map {
+			width: 100%;
+			height: 700px;
+		}
+	</style>
+
+{% endblock styles %}
+
+{% block title %}
+    Cultivos
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+Seleccion puntos de cultivo
+<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Crear" />
+</form>
+
+  <div id="map" style="height: 300px;"></div><br>
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+var mymap = L.map('map').setView([4.6378, -74.08473], 18);
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+maxZoom: 20,
+id: 'mapbox.emerald',
+accessToken: 'your.mapbox.access.token'
+}).addTo(mymap);
+
+var click=0;
+var ponelat,ponelong,ptwolat,ptwolong,pthreelat,pthreelong,pfourlat,pfourlong;
+mymap.on('click', function(e) {
+    var marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap);
+    marker.bindPopup("<b>Position!</b><br>Latitud: "+e.latlng.lat+"<br>Longitud:"+e.latlng.lng).openPopup();
+    click+=1;
+    console.log(click);
+    if(click==1){
+      $("#id_onelat").val(e.latlng.lat); $("#id_onelong").val(e.latlng.lng);
+      ponelat=e.latlng.lat;
+      ponelong=e.latlng.lng;
+    }else if(click==2){
+      $("#id_twolat").val(e.latlng.lat); $("#id_twolong").val(e.latlng.lng);
+      ptwolat=e.latlng.lat;
+      ptwolong=e.latlng.lng;
+    }else if(click==3){
+      $("#id_threelat").val(e.latlng.lat); $("#id_threelong").val(e.latlng.lng);
+      pthreelat=e.latlng.lat;
+      pthreelong=e.latlng.lng;
+    }else if(click==4){
+      $("#id_fourlat").val(e.latlng.lat); $("#id_fourlong").val(e.latlng.lng);
+      pfourlat=e.latlng.lat;
+      pfourlong=e.latlng.lng;
+      var latlngs = [[ponelat, ponelong],[ptwolat, ptwolong],[pthreelat, pthreelong],[pfourlat, pfourlong]];
+      var polygon = L.polygon(latlngs, {color: 'red'}).addTo(mymap);
+    }else if(click>=5){
+      $('input[type=number]').val('');
+      click=0;
+    }
+});
+</script>
+{% endblock %}

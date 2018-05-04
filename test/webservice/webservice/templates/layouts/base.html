@@ -1,0 +1,81 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <title>Agricori | {% block title %}Inicio{% endblock %}</title>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static '/css/AdminLTE.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/skins/skin-green-light.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/widgets.css' %}">
+    <link rel="stylesheet" href="{% static '/css/agricori.css' %}">
+    <link rel="stylesheet" href="{% static '/plugins/select2/select2.min.css' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="icon" href="{% static '/img/favicon.ico' %}" type="image/x-icon" />
+
+    {% block extraImports %}
+    {% endblock extraImports %}
+
+
+    {% block styles %}
+    {% endblock styles %}
+
+</head>
+
+<body class="hold-transition skin-green-light sidebar-mini sidebar-collapse">
+
+<div class="wrapper">
+    <!-- Main Header -->
+    {% block header %}
+        {% include 'layouts/header.html' %}
+    {% endblock header %}
+
+    <!-- Left side column. contains the logo and sidebar -->
+    {% block sidebar %}
+        {% include 'layouts/sidebar.html' %}
+    {% endblock sidebar %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper" style="background-color:white">
+        <!-- Content Header (Page header) -->
+        {% block header_title %}
+            {% include 'layouts/header_title.html' %}
+        {% endblock header_title %}
+
+        <!-- Main content -->
+        <section class="content">
+
+            {% block content %}
+            {% endblock content %}
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+    {% block footer %}
+        {% include 'layouts/footer.html' %}
+    {% endblock footer %}
+
+</div>
+<!-- ./wrapper -->
+
+<script src="{% static '/plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+<script src="{% static '/js/bootstrap.min.js' %}"></script>
+<script src="{% static '/js/app.min.js' %}"></script>
+<script src="{% static '/plugins/fastclick/fastclick.min.js' %}"></script>
+<script src="{% static '/plugins/select2/select2.min.js' %}"></script>
+
+{% block js %}
+{% endblock js %}
+
+</body>
+</html>

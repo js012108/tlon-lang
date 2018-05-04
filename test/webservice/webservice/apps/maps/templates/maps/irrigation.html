@@ -1,0 +1,61 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block title %}
+    Riego
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+  <br>
+  {% if message %}
+    {{message}}
+  {% endif %}
+  <br>
+  {% if eto %}
+    <b>Evapotranspiración potencial: </b><p id="id_eto">{{eto}}</p>
+  {% endif %}
+  <br>
+  {% if lac %}
+    <b>Lamina de agua actual: </b><p id="id_lac">{{lac}}</p><br>
+    {% if laa %}
+      <b>Lamina de agua maxima: </b> <p id="id_laa">{{laa}}</p><br>
+    {% endif %}
+    {% if message2 %}
+      <b>{{message2}} </b> <br>
+    {% endif %}
+  {% endif %}
+  <br>
+  <br>
+  <br>
+
+  {% if alert %}
+    <b>{{alert}} </b><br>
+    {% if irrigat %}
+      <b>Cantidad recomendada de agua: <p id="id_irrigat">{{irrigat}}</p></b> <br>
+    {% endif %}
+  {% endif %}
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+//lac
+  var lac_id = parseFloat("{{lac}}".replace(',', '.'));
+  $("#id_lac").text(lac_id.toFixed(2)+" mm.");
+  //eto
+  var eto_id = parseFloat("{{eto}}".replace(',', '.'));
+  $("#id_eto").text(eto_id.toFixed(2));
+  //laa
+  var laa_id = parseFloat("{{laa}}".replace(',', '.'));
+  $("#id_laa").text(laa_id.toFixed(2)+" mm.");
+  //irrigat
+  var irrigat_id = parseFloat("{{irrigat}}".replace(',', '.'));
+  $("#id_irrigat").text(irrigat_id.toFixed(2)+" mm.");
+</script>
+{% endblock %}

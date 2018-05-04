@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+
+{% endblock styles %}
+
+{% block title %}
+    Suelos
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Crear" />
+</form>
+
+  <div id="map" style="height: 300px;"></div><br>
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+</script>
+{% endblock %}

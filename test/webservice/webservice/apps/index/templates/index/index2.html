@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'index/css/index2.css' %}">
+{% endblock styles %}
+
+{% block title %}
+    Inicio
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'index/js/index2.js' %}"></script>
+{% endblock %}

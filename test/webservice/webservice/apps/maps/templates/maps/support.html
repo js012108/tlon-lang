@@ -1,0 +1,81 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'maps/css/support.css' %}">
+{% endblock styles %}
+
+{% block title %}
+    Contáctenos
+{% endblock title %}
+
+{% block header_title %}
+    {% include 'layouts/header_title.html' %}
+{% endblock header_title %}
+
+{% block content %}
+
+<head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"></head>
+<br /><br><br><br><br>
+<div class="inner contact">
+                <!-- Form Area -->
+                <div class="contact-form">
+                    <!-- Form -->contact
+                    <form id="contact_form" method="post" action="{% url 'maps:map' %}">{% csrf_token %}
+                        <!-- Left Inputs -->
+                        <div class="col-xs-6 wow animated slideInLeft" data-wow-delay=".5s">
+                            <!-- Name -->
+                            <input type="text" name="name" id="name" required="required" class="form" placeholder="Nombre" />
+                            <!-- Email -->
+                            <input type="email" name="mail" id="mail" required="required" class="form" placeholder="Email" />
+                            <!-- Subject -->
+                            <input type="text" name="subject" id="subject" required="required" class="form" placeholder="Asunto" />
+                        </div><!-- End Left Inputs -->
+                        <!-- Right Inputs -->
+                        <div class="col-xs-6 wow animated slideInRight" data-wow-delay=".5s">
+                            <!-- Message -->
+                            <textarea name="message" id="message" class="form textarea"  placeholder="Mensaje"></textarea>
+                        </div><!-- End Right Inputs -->
+                        <!-- Bottom Submit -->
+                        <div class="relative fullwidth col-xs-12">
+                            <!-- Send Button -->
+                            <button type="submit" id="submit" name="submit" class="form-btn semibold">Envíar Mensaje</button>
+                        </div><!-- End Bottom Submit -->
+                        <!-- Clear -->
+                        <div class="clear"></div>
+                    </form>
+
+                    <!-- Your Mail Message -->
+                    <div class="mail-message-area">
+                        <!-- Message -->
+                        <div class="alert gray-bg mail-message not-visible-message">
+                            <strong>Gracias por contactarnos !</strong> Pronto nos pondremos en contacto contigo.
+                        </div>
+                    </div>
+
+                </div><!-- End Contact Form Area -->
+            </div><!-- End Inner -->
+
+
+
+
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'maps/js/support.js' %}"></script>
+    <script type="text/javascript">
+      $("#contact_form").submit(function () {
+        $.ajax({
+          type: $(this).attr('method'),
+          url: $(this).attr("action"),
+          data: $(this).serialize(),
+          success: function (data) {
+            $("#contact_done").show();
+          },
+          error: function(data) {
+            $("#contact_error").show();
+          }
+        });
+      });
+    </script>
+{% endblock %}
