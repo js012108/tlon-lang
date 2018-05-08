@@ -30,6 +30,7 @@ simple_stat
  | importar
  | retornar
  | atom NEWLINE
+ | agente
  | OTHER
  ;
 
@@ -51,6 +52,10 @@ for_stat
 
 log
  : LOG OPAR expr CPAR
+ ;
+
+agente
+ : AGENTE OPAR (atom (COMMA atom)*) CPAR
  ;
 
 funcion
@@ -87,7 +92,7 @@ accessarray
 variable
  : ID (POINT ID)* (OPAR (expr (COMMA expr)*)? CPAR)?
  | ID (POINT ID)* OKEY expr CKEY
- ; 
+ ;
 
 parametro
  : ID (ASSIGN expr)?
@@ -168,6 +173,7 @@ IMPORT: 'importar';
 FROM: 'desde';
 ASTERISC: 'todo';
 POINT: '.';
+AGENTE: 'agente';
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*

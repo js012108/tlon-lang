@@ -14,11 +14,7 @@ elif [[ "$1" == "compile" ]]; then
     cd src/core/grammar
     java org.antlr.v4.Tool -o ../ -no-listener -visitor -Dlanguage=Python3 TLON.g4
 elif [[ "$1" == "run" ]]; then
-<<<<<<< HEAD
-    python3.5 src/main.py test/stringDetector.txt
-=======
-    python3 src/main.py test/shamir.txt
->>>>>>> 02bf2b086b99651bf2c9dee5e3e270bab3abe345
+    python3 src/main.py test/agente.txt
 elif [[ "$1" == "clean" ]]; then
     rm src/core/*.class src/core/*.java src/core/*.pyc src/core/TLON*.py src/core/*.tokens
 else

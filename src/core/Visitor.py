@@ -68,6 +68,8 @@ class Visitor(TLONVisitor):
       return self.visit(ctx.retornar())
     elif ctx.atom() is not None:
       return self.visit(ctx.atom())
+    elif ctx.agente() is not None:
+        return self.visit(ctx.agente())
 
     raise Exception('Semantic Error: Found ' + str(self.OTHER()))
 
@@ -152,6 +154,12 @@ class Visitor(TLONVisitor):
     else:
       print(variable)
 
+    return None
+
+  # Visit a parse tree produced by TLONParser#agente.
+  def visitAgente(self, ctx:TLONParser.AgenteContext):
+    for param in ctx.atom():
+      print(self.visit(param))
     return None
 
   # Visit a parse tree produced by TLONParser#funcion.
