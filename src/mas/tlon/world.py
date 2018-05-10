@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import sys
-sys.path.append('../..')
+sys.path.append('..')
 from mas.tlon.communication.socket_methods import *
 from mas.tlon.natural_laws.constants import *
 from mas.tlon.cultural_laws.control_space import *
@@ -11,6 +11,7 @@ import logging
 import socket
 import socketserver
 import random
+import os
 
 
 class ClientThreadRequest(socketserver.BaseRequestHandler):
@@ -53,6 +54,8 @@ class Environment(object, metaclass=Singleton):
         logging.info('%%%%%%%%%%%%%%%  MAS-TLON  %%%%%%%%%%%%%%%%%')
         logging.debug('Initial setup...')
         self._environment_id = random.random()
+        self.jid = 'admin'
+        self.password = 'qwertyuiop1'
         self._environment_name = 'tlon-{}'.format(self._environment_id)
         self._info_local_machine = get_info_local_machine()
         self._environment_directory = {}
@@ -63,6 +66,10 @@ class Environment(object, metaclass=Singleton):
         # This shold be an unique Id agreed by all enviroments reachables (or not)
 
         # self.cs = ControlSpace("TLÖN_WORLD_ControlSpace_UUID", self.get_instance())
+
+        #START XMPP SERVER.
+        os.system("cd /opt/ejabberd-18.01/bin \n sudo ./ejabberdctl start")
+        logging.info('XMPP Server UP!')
 
         if not self._running:
             server_thread = Thread(target=self._initialize_server())

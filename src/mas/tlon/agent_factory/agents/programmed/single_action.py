@@ -4,19 +4,19 @@ import os
 
 class SingleActionAgent(AbstractAgent):
 
-    class AnAction(OneShotBehavior):
+	class AnAction(OneShotBehavior):
 
-        def _single_action(self):
-            logging.info('I am a single action agent!')
+		def _single_action(self):
+			logging.info('I am a single action agent!')
 
-    def _setup(self):
-        b = self.AnAction()
-        self.add_behaviour(b)
-        b.start()
-        b.join()
+	def _setup(self):
+		b = self.AnAction()
+		self.add_behaviour(b)
+		b.start()
+		b.join()
 
 class PingServer(OneShotBehavior):
-
+    
     def __init__(self, hostname):
         OneShotBehavior.__init__(self)
         self.hostname = hostname
@@ -71,5 +71,3 @@ class MeasurementAgent(AbstractAgent):
         self.add_behaviour(self.behaviour)
         self.behaviour.start()
         self.behaviour.join()
-
-

@@ -212,8 +212,8 @@ def get_info_active_nodes():
     Get basic information of the nodes in the ad hoc network.
     """
     logging.debug('resources.get_info_active_nodes() Executed!')
-    from mas.tlon import Request
-    from mas.tlon import create_message
+    from tlon import Request
+    from tlon import create_message
     active_nodes = get_active_nodes()
     info_active_nodes = {}
 

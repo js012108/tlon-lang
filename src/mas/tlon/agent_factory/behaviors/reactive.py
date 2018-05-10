@@ -88,8 +88,15 @@ class FSM(AbstractBehaviour):
     
     # The agent percieve keyboar input until end string is send
     def perceive_text_input(self):
-        txt_input = open("test/reflex_agents_input.txt", "r")
+        txt_input = open("reflex_agents_input.txt", "r")
         for line in txt_input:
             line = line.strip()
             print(line)
             eval(line)
+               
+
+
+        
+
+    
+

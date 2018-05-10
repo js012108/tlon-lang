@@ -1,4 +1,4 @@
-from tlon.agent_factory.abstract_agent import *
+from mas.tlon.agent_factory.abstract_agent import *
 
 
 class SingleActionAgent(AbstractAgent):
