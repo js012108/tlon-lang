@@ -64,11 +64,6 @@ class TLONVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by TLONParser#agente.
-    def visitAgente(self, ctx:TLONParser.AgenteContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by TLONParser#funcion.
     def visitFuncion(self, ctx:TLONParser.FuncionContext):
         return self.visitChildren(ctx)
@@ -126,6 +121,11 @@ class TLONVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by TLONParser#unaryMinusExpr.
     def visitUnaryMinusExpr(self, ctx:TLONParser.UnaryMinusExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#agenteExpr.
+    def visitAgenteExpr(self, ctx:TLONParser.AgenteExprContext):
         return self.visitChildren(ctx)
 
 
@@ -206,6 +206,11 @@ class TLONVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by TLONParser#nilAtom.
     def visitNilAtom(self, ctx:TLONParser.NilAtomContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#agente.
+    def visitAgente(self, ctx:TLONParser.AgenteContext):
         return self.visitChildren(ctx)
 
 

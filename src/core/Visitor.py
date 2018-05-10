@@ -11,7 +11,7 @@ from .structures import *
 
 sys.setrecursionlimit(100000)
 sys.path.append('/src/lib')
-
+from mas.__init__ import *
 
 class Visitor(TLONVisitor):
   memory_manager = None
@@ -68,8 +68,6 @@ class Visitor(TLONVisitor):
       return self.visit(ctx.retornar())
     elif ctx.atom() is not None:
       return self.visit(ctx.atom())
-    elif ctx.agente() is not None:
-        return self.visit(ctx.agente())
 
     raise Exception('Semantic Error: Found ' + str(self.OTHER()))
 
@@ -158,9 +156,12 @@ class Visitor(TLONVisitor):
 
   # Visit a parse tree produced by TLONParser#agente.
   def visitAgente(self, ctx:TLONParser.AgenteContext):
+    array = []
     for param in ctx.atom():
-      print(self.visit(param))
-    return None
+      value = self.visit(param)
+      array.append(value)
+    agent = eval(array[0])(*array[1:])
+    return agent
 
   # Visit a parse tree produced by TLONParser#funcion.
   def visitFuncion(self, ctx: TLONParser.FuncionContext):

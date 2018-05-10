@@ -30,7 +30,6 @@ simple_stat
  | importar
  | retornar
  | atom NEWLINE
- | agente
  | OTHER
  ;
 
@@ -52,10 +51,6 @@ for_stat
 
 log
  : LOG OPAR expr CPAR
- ;
-
-agente
- : AGENTE OPAR (atom (COMMA atom)*) CPAR
  ;
 
 funcion
@@ -110,6 +105,7 @@ expr
  | left=expr OR right=expr                      #orExpr
  | OPAR expr CPAR 						        #parExpr
  | atom                                         #atomExpr
+ | agente                                       #agenteExpr
  ;
 
 atom
@@ -121,6 +117,10 @@ atom
  | accessarray  #accessToarray
  | variable		#accessVariable
  | NIL          #nilAtom
+ ;
+
+agente
+ : AGENTE OPAR (atom (COMMA atom)*) CPAR
  ;
 
 objeto

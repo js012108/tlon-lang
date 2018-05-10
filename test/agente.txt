@@ -1,1 +1,2 @@
-agente("hola",2,3)
+age = agente("PingAgent",1, "This agent will ping google server" ,"www.google.com")
+age.start()
