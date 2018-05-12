@@ -4,19 +4,19 @@ import os
 
 class SingleActionAgent(AbstractAgent):
 
-	class AnAction(OneShotBehavior):
+    class AnAction(OneShotBehavior):
 
-		def _single_action(self):
-			logging.info('I am a single action agent!')
+        def _single_action(self):
+            logging.info('I am a single action agent!')
 
-	def _setup(self):
-		b = self.AnAction()
-		self.add_behaviour(b)
-		b.start()
-		b.join()
+    def _setup(self):
+        b = self.AnAction()
+        self.add_behaviour(b)
+        b.start()
+        b.join()
 
 class PingServer(OneShotBehavior):
-    
+
     def __init__(self, hostname):
         OneShotBehavior.__init__(self)
         self.hostname = hostname
@@ -30,8 +30,8 @@ class PingServer(OneShotBehavior):
 
 class PingAgent(AbstractAgent):
 
-    def __init__(self,  identifier, description, hostname):
-        AbstractAgent.__init__(self, identifier, description)
+    def __init__(self, description, jid, password,hostname, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
         self.behavior = PingServer(hostname)
 
     def _setup(self):
@@ -52,20 +52,20 @@ class ExecuteScript(OneShotBehavior):
         response = os.system("python " + "test/" + self.script)
 
 class MeasurementAgent(AbstractAgent):
-    
-    def __init__(self,  identifier, description, times):
-        AbstractAgent.__init__(self, identifier, description)
+
+    def __init__(self, description, jid, password, times, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
         self.behaviour = ExecuteScript("scripts/measure_taker.py")
         self.times = times
         self.script = "scripts/measure_taker.py"
-    
+
     def updateScript(self):
         with open('test/' + self.script, 'r') as file:
             data = file.readlines()
         data[0]='x = ' + str(self.times) + '\n'
         with open('test/' + self.script, 'w') as file:
             file.writelines( data )
-    
+
     def _setup(self):
         self.updateScript()
         self.add_behaviour(self.behaviour)

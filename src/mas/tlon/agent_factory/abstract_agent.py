@@ -10,6 +10,7 @@ from sleekxmpp import ClientXMPP
 import os
 
 
+
 class AbstractAgent(multiprocessing.Process, ClientXMPP):
     """
     Set of attributes and methods that  all agents in the system have
@@ -43,9 +44,6 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
         else:
             logging.info("User '"+jid+"' successfully registered in XMPP server")
         ClientXMPP.__init__(self, jid+'@tlon', password)
-        self.connect(address=('127.0.0.1', 5222),use_tls = False)
-        self.process(block=False)
-        logging.info("User '"+jid+"' logged in XMPP server")
         logging.basicConfig(level=logging.DEBUG,format='%(levelname)-8s %(message)s')
         self.add_event_handler("session_start", self.session_start)
         self.add_event_handler("message", self.message)
@@ -145,10 +143,14 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
 
     def run(self):
         if self._register_agent():
+            self.connect(address=('127.0.0.1', 5222),use_tls = False)
+            self.process(block=False)
+            logging.info("User '"+self.jabberid+"' logged in XMPP server")
             logging.info('Now agent -{}- is alive!'.format(self.name))
             self._setup()
             self._running = True
             logging.info('Now agent -{}- is inactive!'.format(self.name))
+            self.disconnect_custom()
 
     #####################################################################
 

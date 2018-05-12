@@ -3,7 +3,7 @@
 importar mas.__init__
 
 funcion singleAction()
-    agent = SingleActionAgent(1,"Agent that do just one thing")
+    agent = SingleActionAgent("Agent that do just one thing","testuser1","pass123")
     agent.start()
 end
 

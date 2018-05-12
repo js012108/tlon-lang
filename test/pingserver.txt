@@ -3,9 +3,9 @@
 
 importar mas.__init__
 
-funcion pinghost(agentId, description, hostname)
-    agent = PingAgent(agentId, description, hostname)
+funcion pinghost(description, jid, password, hostname)
+    agent = PingAgent(description, jid, password, hostname)
     agent.start()
 end
 
-resultPing = pinghost(1, "This agent will ping google server" ,"www.google.com")
+resultPing = pinghost("This agent will ping google server", "testuser1", "pass123", "www.google.com")
