@@ -5,9 +5,9 @@
     <!-- Logo -->
     <a href="/index/menu" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>A</b>C</span>
+        <span class="logo-mini"><b></b></span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>A</b>gricori</span>
+        <span class="logo-lg"><b></b></span>
     </a>
 
     <!-- Header Navbar -->
@@ -44,37 +44,10 @@
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                      {% if user.is_authenticated %}
-                        {% if user.userprofile.image %}
-                          <img src="{{ user.userprofile.image.url }}" class="user-image" alt="User Image">
-                        {% else %}
-                          <img src="{% static 'img/user2-160x160.jpg' %}" class="user-image" alt="User Image">
-                        {% endif %}
-                        {% if user.get_full_name %}
-                          <span class="hidden-xs">{{user.get_full_name}}</span>
-                        {% else %}
-                          <span class="hidden-xs">{{ user.get_username }}</span>
-                        {% endif %}
-                      {% endif %}
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                          {% if user.is_authenticated %}
-                          {% if user.userprofile.image %}
-                            <img src="{{ user.userprofile.image.url }}" class="img-circle" alt="User Image">
-                          {% else %}
-                            <img src="{% static 'img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
-                          {% endif %}
-                            <p>
-                              {% if user.get_full_name %}
-                                {{user.get_full_name}} - {{ user.get_username }}
-                              {% else %}
-                                {{ user.get_username }}
-                              {% endif %}
-                                <small>{{ user.email }}</small>
-                            </p>
-                          {% endif %}
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">

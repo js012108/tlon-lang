@@ -1,49 +1,11 @@
 {% load staticfiles %}
-
 <aside class="main-sidebar">
-
     <section class="sidebar">
-      <ul class="sidebar-menu">
-
-        {% if sidebar %}
-            {% for label in sidebar.labels %}
-                <li id="{{label.id}}" class="active">
-                    <a href="#">
-                        <i class="{{ label.class }}"></i>
-                        <span>{{label.name}}</span>
-                    </a>
-                    {% if label.sublabel %}
-                        <ul class="treeview-menu menu-open" style="overflow: hidden; display: block;">
-                            {% for sublabel in label.sublabel %}
-                                <li>
-                                    <a href="{{ sublabel.href }}">
-                                        <i class="{{ sublabel.class }}"></i>
-                                        {{ sublabel.name }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    <ul class="treeview-menu menu-open" style="overflow: hidden; display: block;">
-          </ul>
-            {% endfor %}
-        {% else %}
-          <li class="active">
-              <a href="{% url 'maps:measurement' %}">
-                  <i class="fa fa-table"></i>
-                  <span>Lista Medidas</span>
-              </a>
-          </li>
+        <ul class="sidebar-menu">
             <li class="active">
-                <a href="{% url 'maps:crops' %}">
-                    <i class="fa fa-bars"></i>
-                    <span>Cargar Medida</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="{% url 'maps:massive_upload' %}">
-                    <i class="fa fa-database"></i>
-                    <span>Carga Masiva</span>
+                <a href="{% url 'maps:measurement' %}">
+                    <i class="fa fa-table"></i>
+                    <span>Lista Medidas</span>
                 </a>
             </li>
             <li class="active">
@@ -52,29 +14,6 @@
                     <span>Mapas</span>
                 </a>
             </li>
-            <li class="active">
-                <a href="{% url 'maps:crops' %}">
-                    <i class="fa fa-crop"></i>
-                    <span>Administrar Cultivos</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="{% url 'maps:irrigation' %}">
-                    <i class="fa fa-calendar-check-o"></i>
-                    <span>Riego</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="{% url 'maps:support' %}">
-                    <i class="fa fa-support"></i>
-                    <span>Soporte</span>
-                </a>
-            </li>
-
-
-        {% endif %}
-
-
-      </ul>
+        </ul>
     </section>
 </aside>

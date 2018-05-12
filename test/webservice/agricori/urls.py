@@ -7,10 +7,9 @@ from django.contrib.auth.views import login
 
 
 urlpatterns = [
-    url(r'^', include('apps.index.urls')),
-    url(r'^index/', include('apps.index.urls')),
+#    url(r'^', include('apps.index.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^maps/', include('apps.maps.urls', namespace='maps'))
+    url(r'^', include('apps.maps.urls', namespace='maps'))
 ]
 
 if settings.DEBUG:
