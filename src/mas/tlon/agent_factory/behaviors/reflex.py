@@ -13,7 +13,7 @@ class OneShotBehavior(AbstractBehaviour):
         self._first_time = True
         self.name = self.__class__.__name__
         logging.info('Behavior -reflex.{}- created successfully!'.
-                     format(self.__class__.__name__))
+                    format(self.__class__.__name__))
 
     def _single_action(self):
         pass

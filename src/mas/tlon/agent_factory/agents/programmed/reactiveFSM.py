@@ -15,7 +15,7 @@ class AbcFSM(AbstractAgent):
             logging.info("Counter: {}".format(self.counter))
             #print('counter ', self.counter)
             self.counter = self.counter + 1
-    
+
     class FiniteStateMachine(FSM):
 
         def on_start(self):
@@ -23,7 +23,7 @@ class AbcFSM(AbstractAgent):
 
         def on_end(self):
             print("Ending FSM . . .")
-        
+
         def fsm_action(self):
             #self.ordered_transitions(['c','b','a'])
             #self.run_with_timer(2,10)
@@ -42,7 +42,7 @@ class AbcFSM(AbstractAgent):
         b.start()
         b.join()
         fsm_behaviour.join()
-        
+
 
 """ Agent that controls the on and off system off a fridge depending on a temperature sensor and user defined upper and lower boundaries """
 class FridgeFSM(AbstractAgent):
@@ -78,16 +78,16 @@ class Dealer(AbstractAgent):
 
         def on_end(self):
             print("Ending dealer behavior as FSM ...")
-    
+
     def _setup(self):
-        
+
         states =['Configuracion','ConsultarWS','CreacionApuesta']
         transitions = [
             { 'trigger': 'FConfiguracion', 'source': 'Configuracion', 'dest': 'ConsultarWS' },
             { 'trigger': 'NadaNuevo', 'source': 'ConsultarWS', 'dest': 'ConsultarWS'},
             { 'trigger': 'NuevaApuesta', 'source': 'ConsultarWS', 'dest': 'CreacionApuesta' },
             { 'trigger': 'BuscarOtra', 'source': 'CreacionApuesta', 'dest': 'ConsultarWS' }
-        ] 
+        ]
         fsm_behaviour = self.FiniteStateMachine(states=states, transitions=transitions, initial=states[0])
         self.add_behaviour(fsm_behaviour)
         fsm_behaviour.start()
@@ -104,7 +104,7 @@ class BetOpener(AbstractAgent):
 
         def on_end(self):
             print("Ending BetOpener behavior as FSM. . .")
-    
+
     def _setup(self):
 
         states=['NuevaApuesta','PublicarConfigurar','AbrirApuesta']
@@ -130,9 +130,9 @@ class BetCloser(AbstractAgent):
 
         def on_end(self):
             print("Ending BetCloser behavior as FSM. . .")
-    
+
     def _setup(self):
-        
+
         states=['BuscarACierre','Actualizar','ComunicarJugadores']
         transitions = [
             { 'trigger': 'ApuestaPorCerrar', 'source': 'BuscarACierre', 'dest': 'Actualizar' },
@@ -156,9 +156,9 @@ class BetPayer(AbstractAgent):
 
         def on_end(self):
             print("Ending BetPlayer behavior as FSM. . .")
-    
+
     def _setup(self):
-        
+
         states=['Espera','Contabilidad','Paga']
         transitions = [
             { 'trigger': 'NadaNuevo', 'source': 'Espera', 'dest': 'Espera' },
@@ -178,10 +178,10 @@ class FiniteStateMachine(FSM):
 
     def on_start(self):
         print("Starting FSM ...")
-    
+
     def on_end(self):
         print("Endng FSM ...")
-    
+
 class OneStringDetector(AbstractAgent):
 
     def __init__(self, description, community_id='', string=''):
@@ -190,7 +190,7 @@ class OneStringDetector(AbstractAgent):
         self.states = []
         self.transitions = []
         self.fsm = None
-    
+
     def generate_transitions(self):
         if  self.string:
             self.states=list(self.string)
@@ -203,13 +203,13 @@ class OneStringDetector(AbstractAgent):
                 i += 1
         else:
             print("Can't generate FSM from an empty string")
-        
-    
+
+
     #Return true if given string is the same as the stored one
     def validateString(self, text):
         i=0
-        while(i<len(text)-1):            
-            try: 
+        while(i<len(text)-1):
+            try:
                 eval('self.fsm.'+text[i]+'to'+text[i+1]+'()')
             except:
                 print("Letter " + text[i+1] + " after letter " + text[i] + " is not recognized by this agent")
