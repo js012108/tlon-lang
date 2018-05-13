@@ -3,7 +3,7 @@
 importar mas.__init__
 
 funcion stringDetector()
-    agent = OneStringDetector("Detect a given string", 2, "cadena")
+    agent = OneStringDetector("Detect a given string", "testuser1", "pass123", "cadena")
     agent.validateString("cadena")
     agent.start()
 end

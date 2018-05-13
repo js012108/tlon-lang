@@ -3,7 +3,7 @@
 importar mas.__init__
 
 funcion callBash()
-    agent = CycleCallBash(1, "Send commands to bash")
+    agent = CycleCallBash("Send commands to bash","testuser1","pass123")
     agent.start()
 end
 

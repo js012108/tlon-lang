@@ -184,8 +184,8 @@ class FiniteStateMachine(FSM):
 
 class OneStringDetector(AbstractAgent):
 
-    def __init__(self, description, community_id='', string=''):
-        AbstractAgent.__init__(self, description, community_id)
+    def __init__(self, description, jid, password,string='', community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
         self.string = string
         self.states = []
         self.transitions = []

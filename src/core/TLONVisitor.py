@@ -109,6 +109,31 @@ class TLONVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by TLONParser#atomExpr.
+    def visitAtomExpr(self, ctx:TLONParser.AtomExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#orExpr.
+    def visitOrExpr(self, ctx:TLONParser.OrExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#additiveExpr.
+    def visitAdditiveExpr(self, ctx:TLONParser.AdditiveExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#relationalExpr.
+    def visitRelationalExpr(self, ctx:TLONParser.RelationalExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#comunidadExpr.
+    def visitComunidadExpr(self, ctx:TLONParser.ComunidadExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by TLONParser#parExpr.
     def visitParExpr(self, ctx:TLONParser.ParExprContext):
         return self.visitChildren(ctx)
@@ -134,28 +159,8 @@ class TLONVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by TLONParser#atomExpr.
-    def visitAtomExpr(self, ctx:TLONParser.AtomExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by TLONParser#orExpr.
-    def visitOrExpr(self, ctx:TLONParser.OrExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by TLONParser#additiveExpr.
-    def visitAdditiveExpr(self, ctx:TLONParser.AdditiveExprContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by TLONParser#powExpr.
     def visitPowExpr(self, ctx:TLONParser.PowExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by TLONParser#relationalExpr.
-    def visitRelationalExpr(self, ctx:TLONParser.RelationalExprContext):
         return self.visitChildren(ctx)
 
 
@@ -211,6 +216,11 @@ class TLONVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by TLONParser#agente.
     def visitAgente(self, ctx:TLONParser.AgenteContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by TLONParser#comunidad.
+    def visitComunidad(self, ctx:TLONParser.ComunidadContext):
         return self.visitChildren(ctx)
 
 

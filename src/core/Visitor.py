@@ -163,6 +163,18 @@ class Visitor(TLONVisitor):
     agent = eval(array[0])(*array[1:])
     return agent
 
+  # Visit a parse tree produced by TLONParser#comunidad.
+  def visitComunidad(self, ctx:TLONParser.ComunidadContext):
+      import json
+      params = []
+      for param in ctx.atom():
+          value = self.visit(param)
+          params.append(value)
+      dict_agents = params[0].replace("'",'"')
+      dict_agents = json.loads(dict_agents)
+      comm = Community(dict_agents,params[1])
+      return comm
+
   # Visit a parse tree produced by TLONParser#funcion.
   def visitFuncion(self, ctx: TLONParser.FuncionContext):
     opcionales = False
