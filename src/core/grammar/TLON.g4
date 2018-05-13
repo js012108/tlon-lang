@@ -106,6 +106,7 @@ expr
  | OPAR expr CPAR 						        #parExpr
  | atom                                         #atomExpr
  | agente                                       #agenteExpr
+ | comunidad                                    #comunidadExpr
  ;
 
 atom
@@ -121,6 +122,10 @@ atom
 
 agente
  : AGENTE OPAR (atom (COMMA atom)*) CPAR
+ ;
+
+comunidad
+ : COMUNIDAD OPAR (atom (COMMA atom)*) CPAR
  ;
 
 objeto
@@ -174,6 +179,7 @@ FROM: 'desde';
 ASTERISC: 'todo';
 POINT: '.';
 AGENTE: 'agente';
+COMUNIDAD: 'comunidad';
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*

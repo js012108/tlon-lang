@@ -1,0 +1,5 @@
+#script que corre comunidades
+comm = comunidad("{'PingAgent':{'1':{'description':'This agent will ping google server','params':['www.google.com']}}}","assignment")
+agentes = comm.create()
+log(agentes)
+comm.start_agent(0)

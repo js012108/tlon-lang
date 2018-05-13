@@ -1,2 +1,3 @@
+#script que corre agente
 age = agente("PingAgent","This agent will ping google server" ,"testuser1","pass123","www.google.com")
 age.start()
