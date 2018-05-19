@@ -4,7 +4,8 @@ import time
 #********Download and install ejabberd 18.01 server**********
 comando1 = '''
 sudo apt-get -y install ejabberd
-sudo chmod 777 -r /etc/ejabberd
+sudo chmod 777 -R /etc/ejabberd
+sudo chmod 777 /etc/ejabberd/ejabberd.yml
 '''
 os.system(comando1)
 
