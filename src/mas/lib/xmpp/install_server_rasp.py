@@ -8,13 +8,6 @@ sudo chmod 777 -R /etc/ejabberd
 sudo chmod 777 /etc/ejabberd/ejabberd.yml
 '''
 os.system(comando1)
-
-#**********Adding 'tlon' host to ejabberd server**********
-#Give permissions to edit ejabberd.yml
-comando2 = '''
-/etc/ejabberd
-'''
-os.system(comando2)
 #read and edit specific line
 f = open("/etc/ejabberd/ejabberd.yml", "r")
 contents = f.readlines()
@@ -34,8 +27,9 @@ sudo ejabberdctl start
 sudo ejabberdctl restart
 '''
 os.system(comando3)
+print("RESTART START")
 #wait time until the server really starts
-time.sleep(15)
+time.sleep(20)
 #register the admin in the 'tlon' host
 comando4 = '''
 sudo ejabberdctl register admin tlon qwertyuiop1
