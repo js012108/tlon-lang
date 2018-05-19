@@ -55,4 +55,4 @@ f.close()
 comando5 = '''
 sudo ejabberdctl restart
 '''
-os.system(comando6)
+os.system(comando5)
