@@ -46,7 +46,7 @@ f = open("/etc/ejabberd/ejabberd.yml", "r")
 contents = f.readlines()
 f.close()
 #add new line to register admin@tlon as admin account in server and save new file
-contents.insert(417,'      - "admin@tlon" ')
+contents.insert(417,'      - "admin@tlon \n" ')
 f = open("/etc/ejabberd/ejabberd.yml", "w")
 contents = "".join(contents)
 f.write(contents)
