@@ -20,7 +20,7 @@ f = open("/etc/ejabberd/ejabberd.yml", "r")
 contents = f.readlines()
 f.close()
 value = '  - "tlon" \n'
-contents[83] = value
+contents.insert(83,value)
 #saving new ejabberd.yml
 f = open("/etc/ejabberd/ejabberd.yml", "w")
 contents = "".join(contents)
