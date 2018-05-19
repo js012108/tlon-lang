@@ -20,7 +20,7 @@ f = open("/etc/ejabberd/ejabberd.yml", "r")
 contents = f.readlines()
 f.close()
 value = '  - "tlon" \n'
-contents[96] = value
+contents[83] = value
 #saving new ejabberd.yml
 f = open("/etc/ejabberd/ejabberd.yml", "w")
 contents = "".join(contents)
@@ -46,7 +46,7 @@ f = open("/etc/ejabberd/ejabberd.yml", "r")
 contents = f.readlines()
 f.close()
 #add new line to register admin@tlon as admin account in server and save new file
-contents.insert(460,'      - "admin@tlon" ')
+contents.insert(417,'      - "admin@tlon" ')
 f = open("/etc/ejabberd/ejabberd.yml", "w")
 contents = "".join(contents)
 f.write(contents)
