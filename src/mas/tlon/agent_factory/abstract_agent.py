@@ -10,7 +10,6 @@ from sleekxmpp import ClientXMPP
 import os
 
 
-
 class AbstractAgent(multiprocessing.Process, ClientXMPP):
     """
     Set of attributes and methods that  all agents in the system have
@@ -40,9 +39,11 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
         cd /opt/ejabberd-18.01/bin
         sudo ./ejabberdctl register '''+jid+' tlon '+password+' > /dev/null'
         if os.system(command)!=0:
-            logging.info("User '"+jid+"' is already registered in XMPP server")
-        else:
-            logging.info("User '"+jid+"' successfully registered in XMPP server")
+            command = '''
+            sudo ejabberdctl register '''+jid+' tlon '+password+' > /dev/null'
+            if os.system(command)!=0:
+                pass
+        logging.info("User '"+jid+"' in XMPP server")
         ClientXMPP.__init__(self, jid+'@tlon', password)
         logging.basicConfig(level=logging.DEBUG,format='%(levelname)-8s %(message)s')
         self.add_event_handler("session_start", self.session_start)
