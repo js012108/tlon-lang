@@ -43,7 +43,7 @@ try:
     while i<x:
         humedad, temperatura = Adafruit_DHT.read_retry(sensor, pin)
         gps()
-        #r = requests.post("http://www.bitsobet.com/maps/", data={'temp': temperatura, 'hum': humedad, 'longitud' : lon, 'latitud' : lat, 'humsuelo' : 0, 'precipitacion' : 6, 'datemed' : time})
+        r = requests.post("http://13.58.53.154/map", data={'temp': temperatura, 'hum': humedad, 'longitud' : lon, 'latitud' : lat, 'humsuelo' : 0, 'precipitacion' : 6, 'datemed' : time})
         print(temperatura, humedad, lon, lat)
         i += 1
 
