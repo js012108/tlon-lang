@@ -1,0 +1,5 @@
+importar mas.__init__
+
+agent = VoterAgent("This agent will ping google server", "testuser1", "pass123")
+agent.set_veedor("testuser2")
+agent.start()

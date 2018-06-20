@@ -146,6 +146,8 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
         if self._register_agent():
             self.connect(address=('127.0.0.1', 5222),use_tls = False)
             self.process(block=False)
+            import time
+            time.sleep(1)
             logging.info("User '"+self.jabberid+"' logged in XMPP server")
             logging.info('Now agent -{}- is alive!'.format(self.name))
             self._setup()

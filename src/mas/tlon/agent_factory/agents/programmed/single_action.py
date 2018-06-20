@@ -71,3 +71,28 @@ class MeasurementAgent(AbstractAgent):
         self.add_behaviour(self.behaviour)
         self.behaviour.start()
         self.behaviour.join()
+
+'''Agent that vote '''
+class VoteAction(OneShotBehavior):
+    def __init__(self, veedor, Voter):
+        OneShotBehavior.__init__(self)
+        self.veedor = veedor + "@tlon"
+        self.voter = Voter
+
+    def _single_action(self):
+        print(self.veedor)
+        self.voter.send_message(mto=self.veedor,mbody="hola",mtype='chat')
+
+class VoterAgent(AbstractAgent):
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.attr = "attr"
+
+    def set_veedor(self,veedor):
+        self.behavior = VoteAction(veedor,self)
+
+    def _setup(self):
+        behaviour = self.behavior
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
