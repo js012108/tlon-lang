@@ -80,19 +80,43 @@ class VoteAction(OneShotBehavior):
         self.voter = Voter
 
     def _single_action(self):
-        print(self.veedor)
+        #import time
+        #time.sleep(5)
         self.voter.send_message(mto=self.veedor,mbody="hola",mtype='chat')
 
 class VoterAgent(AbstractAgent):
-    def __init__(self, description, jid, password, community_id=''):
-        AbstractAgent.__init__(self,description, jid, password, community_id)
-        self.attr = "attr"
-
     def set_veedor(self,veedor):
-        self.behavior = VoteAction(veedor,self)
+        self.behaviour = VoteAction(veedor,self)
 
     def _setup(self):
-        behaviour = self.behavior
+        behaviour = self.behaviour
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
+
+'''Candidate agent'''
+
+from random import randint
+class CampaignAction(OneShotBehavior):
+    def __init__(self, voters, Candidate):
+        OneShotBehavior.__init__(self)
+        self.voters = voters
+        self.candidate = Candidate
+
+    def _single_action(self):
+        for voter in self.voters:
+            print(voter.jabber_id,self.candidate.resources,randint(1,10))
+
+class CandidateAgent(AbstractAgent):
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.resources = randint(1,10)*10
+
+    def set_voters(self, voters):
+        self.behaviour = CampaignAction(voters,self)
+
+    def _setup(self):
+        behaviour = self.behaviour
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()

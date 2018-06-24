@@ -1,5 +1,13 @@
 importar mas.__init__
 
-agent = VoterAgent("This agent will ping google server", "testuser1", "pass123")
-agent.set_veedor("testuser2")
-agent.start()
+#agent = VoterAgent("This agent will ping google server", "testuser1", "pass123")
+#agent.set_veedor("testuser2")
+#agent.start()
+
+comm = comunidad("{'VoterAgent':{'2':{'description':'This agent will ping google server','params':[]}}}","assignment")
+agentes = comm.create()
+log(agentes)
+
+agent1 = CandidateAgent("This agent will ping google server", "testuser1", "pass123")
+agent1.set_voters(agentes)
+agent1.start()

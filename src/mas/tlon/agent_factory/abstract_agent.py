@@ -52,6 +52,10 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
         logging.info('Agent -{} created successfully!'.format(self.name))
 
     @property
+    def jabber_id(self):
+        return self.jabberid
+
+    @property
     def agent_id(self):
         return self._agent_id
 

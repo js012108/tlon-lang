@@ -1,4 +1,5 @@
 from .agents import *
+import uuid
 
 class Community():
     def __init__(self,dict_agents,assignment):
@@ -7,7 +8,6 @@ class Community():
         self.agents = []
 
     def create(self):
-        counter=1
         for agent in self.dict_agents:
             for number_agents in self.dict_agents[agent]:
                 all_params = self.dict_agents[agent][number_agents]
@@ -19,9 +19,8 @@ class Community():
                 agent_type_params.insert(0,jid)
                 agent_type_params.insert(0,description)
                 for num in range(int(number_agents)):
-                    agent_type_params[1]= jid+str(counter)
+                    agent_type_params[1]= jid+str(uuid.uuid4())[:8]
                     created_agent = eval(agent)(*agent_type_params)
-                    counter+=1
                     self.agents.append(created_agent)
         return self.agents
 
