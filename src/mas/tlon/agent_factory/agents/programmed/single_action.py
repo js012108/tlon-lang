@@ -80,11 +80,22 @@ class VoteAction(OneShotBehavior):
         self.voter = Voter
 
     def _single_action(self):
-        #import time
-        #time.sleep(5)
-        self.voter.send_message(mto=self.veedor,mbody="hola",mtype='chat')
+        import time
+        time.sleep(10)
+        decision = 0
+        body_vote = ''
+        for candidate in self.voter.judgment:
+            if int(candidate[1])/int(candidate[2]) > decision:
+                decision = int(candidate[1])/int(candidate[2])
+                body_vote = candidate[0]
+        self.voter.send_message(mto=self.veedor,mbody=body_vote,mtype='chat')
 
 class VoterAgent(AbstractAgent):
+
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.judgment = []
+
     def set_veedor(self,veedor):
         self.behaviour = VoteAction(veedor,self)
 
@@ -93,6 +104,10 @@ class VoterAgent(AbstractAgent):
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()
+
+    def message(self, msg):
+        if msg['type'] in ('chat', 'normal'):
+            self.judgment.append(msg['body'].split('_'))
 
 '''Candidate agent'''
 
@@ -104,8 +119,11 @@ class CampaignAction(OneShotBehavior):
         self.candidate = Candidate
 
     def _single_action(self):
+        import time
+        time.sleep(2)
         for voter in self.voters:
-            print(voter.jabber_id,self.candidate.resources,randint(1,10))
+            body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
+            self.candidate.send_message(mto=voter.jabber_id+'@tlon',mbody=body,mtype='chat')
 
 class CandidateAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
