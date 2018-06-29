@@ -89,12 +89,14 @@ class VoteAction(OneShotBehavior):
                 decision = int(candidate[1])/int(candidate[2])
                 body_vote = candidate[0]
         self.voter.send_message(mto=self.veedor,mbody=body_vote,mtype='chat')
+        time.sleep(10)
 
 class VoterAgent(AbstractAgent):
 
     def __init__(self, description, jid, password, community_id=''):
         AbstractAgent.__init__(self,description, jid, password, community_id)
         self.judgment = []
+        self._gateway = None
 
     def set_veedor(self,veedor):
         self.behaviour = VoteAction(veedor,self)
@@ -106,7 +108,10 @@ class VoterAgent(AbstractAgent):
         behaviour.join()
 
     def message(self, msg):
-        if msg['type'] in ('chat', 'normal'):
+        if msg['subject'] == 'election' and msg['type'] in ('chat', 'normal'):
+            self._gateway = msg['body']
+            print("==========GATEWAY=======", self._gateway)
+        elif msg['type'] in ('chat', 'normal'):
             self.judgment.append(msg['body'].split('_'))
 
 '''Candidate agent'''
@@ -138,3 +143,42 @@ class CandidateAgent(AbstractAgent):
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()
+
+'''Veedor agent for elections (Registraduria)'''
+
+class VoteCounterAction(OneShotBehavior):
+    def __init__(self, counter_election,Veedor):
+        OneShotBehavior.__init__(self)
+        self.counter_election = counter_election
+        self.veedor = Veedor
+
+    def _single_action(self):
+        import time
+        time.sleep(15)
+        gateway = max(self.counter_election,key=self.counter_election.get)
+        for voter in self.veedor.voters:
+            self.veedor.send_message(mto=voter+'@tlon',mbody=gateway,msubject='election',mtype='chat')
+
+class VeedorAgent(AbstractAgent):
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.candidates = {}
+        self.voters = []
+
+    def set_candidates(self, candidates_list):
+        for candidate in candidates_list:
+            self.candidates[candidate.jabber_id] = 0
+
+    def set_voters(self, voters_list):
+        for voter in voters_list:
+            self.voters.append(voter.jabber_id)
+
+    def _setup(self):
+        behaviour = VoteCounterAction(self.candidates,self)
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
+
+    def message(self, msg):
+        if msg['type'] in ('chat', 'normal'):
+            self.candidates[msg['body']] += 1
