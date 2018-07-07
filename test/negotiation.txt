@@ -1,0 +1,31 @@
+importar mas.__init__
+
+#CREANDO VOTANTES
+comm_voters = comunidad("{'VoterAgent':{'5':{'description':'This agent will vote!','params':[]}}}","assignment")
+voters = comm_voters.create()
+
+#CREANDO CANDIDATOS
+comm_candidates = comunidad("{'CandidateAgent':{'2':{'description':'This agent will run for president(gateway)!','params':[]}}}","assignment")
+candidates = comm_candidates.create()
+
+#CREANDO VEEDOR-REGISTRADURIA
+veedor = VeedorAgent("This agent will make the veeduria!", "testuser2", "pass123")
+veedor.set_voters(voters)
+veedor.set_candidates(candidates)
+veedor.start()
+
+log("######################VOTANTES#####################")
+for voter in voters{
+    log("*****VOTERS_jabber_idddddddd*******")
+    log(voter.jabber_id)
+    voter.set_veedor("testuser2")
+    voter.start()
+}
+
+log("######################CANDIDATOS#####################")
+for candidate in candidates{
+    log("*****CANDIDATES_jabber_idddddddd*******")
+    log(candidate.jabber_id)
+    candidate.set_voters(voters)
+    candidate.start()
+}

@@ -182,3 +182,80 @@ class VeedorAgent(AbstractAgent):
     def message(self, msg):
         if msg['type'] in ('chat', 'normal'):
             self.candidates[msg['body']] += 1
+
+
+'''Network Agent that will get resources in negotiation'''
+
+import random
+class NetworkAction(OneShotBehavior):
+    def __init__(self):
+        OneShotBehavior.__init__(self)
+
+    def _single_action(self):
+        import time
+        time.sleep(15)
+
+class NetworkAgent(AbstractAgent):
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.resource_agent = None
+        self.resources_needed = random.randint(15, 50) #percentage
+        self.minimum_needed = self.resources_needed - random.randint(1,10) #percentage
+
+    def set_resource_agent(self, resource_agent):
+        self.resource_agent = resource_agent.jabber_id
+
+    def _setup(self):
+        behaviour = NetworkAction(self)
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
+
+    def message(self, msg):
+        if msg['type'] in ('chat', 'normal'):
+            if int(msg['body']) > self.resources_needed:
+                self.send_message(mto=self.resource_agent+'@tlon',msubject='finish',mbody=self.resources_needed,mtype='chat')
+            else:
+                new_resources = (int(msg['body']) + self.resources_needed) / 2
+                if new_resources > self.minimum_needed:
+                    self.send_message(mto=self.resource_agent+'@tlon',mbody=new_resources,mtype='chat')
+                else:
+                    self.send_message(mto=self.resource_agent+'@tlon',msubject=self.minimum_needed,msubject='last',mbody=self.resources_needed,mtype='chat')
+
+'''Resources Agent that will give resources in negotiation'''
+
+import random
+class ResourcesAction(OneShotBehavior):
+    def __init__(self, ResourceAgent):
+        OneShotBehavior.__init__(self)
+        self.resource_agent = ResourceAgent
+
+    def _single_action(self):
+        import time
+        time.sleep(15)
+        network = self.resource_agent.network
+        resources = self.resource_agent.initial_resource
+        self.resource_agent.send_message(mto=network+'@tlon',mbody=resources,mtype='chat')
+
+class ResourcesAgent(AbstractAgent):
+    def __init__(self, description, jid, password, community_id=''):
+        AbstractAgent.__init__(self,description, jid, password, community_id)
+        self.network = None
+        self.maximum_avaliable = random.randint(15, 50) #percentage
+        self.initial_resource = random.randint(15,self.maximum_avaliable) #percentage
+
+    def set_network(self,network):
+        self.network = network.jabber_id
+
+    def _setup(self):
+        behaviour = ResourcesAction(self)
+        self.add_behaviour(behaviour)
+        behaviour.start()
+        behaviour.join()
+
+    def message(self, msg):
+        if msg['subject'] == 'finish' and msg['type'] in ('chat', 'normal'):
+            print("==========NEGOTIATED RESOURCES=======", msg['body'])
+        elif msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
+            if int(msg['body']) > self.maximum_avaliable:
+                print("==========NO AGREEMENT======= :C")
