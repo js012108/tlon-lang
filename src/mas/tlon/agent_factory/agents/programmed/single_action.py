@@ -201,6 +201,7 @@ class NetworkAgent(AbstractAgent):
         self.resource_agent = None
         self.resources_needed = random.randint(15, 50) #percentage
         self.minimum_needed = self.resources_needed - random.randint(1,10) #percentage
+        self.state_neg = True
         print("NETWORK ###### needed ##### minimum",self.resources_needed,self.minimum_needed)
 
     def set_resource_agent(self, resource_agent):
@@ -213,15 +214,22 @@ class NetworkAgent(AbstractAgent):
         behaviour.join()
 
     def message(self, msg):
-        if msg['type'] in ('chat', 'normal'):
-            if int(msg['body']) > self.resources_needed:
-                self.send_message(mto=self.resource_agent+'@tlon',msubject='finish',mbody=str(self.resources_needed),mtype='chat')
-            else:
-                new_resources = (int(float(msg['body'])) + self.resources_needed) / 2
-                if new_resources >= self.minimum_needed:
-                    self.send_message(mto=self.resource_agent+'@tlon',mbody=str(new_resources),mtype='chat')
+        if self.state_neg:
+            if msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
+                if int(float(msg['body'])) <= self.resources_needed and int(float(msg['body'])) >=self.minimum_needed:
+                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
                 else:
-                    self.send_message(mto=self.resource_agent+'@tlon',msubject='last',mbody=str(self.resources_needed),mtype='chat')
+                    print("==========NO AGREEMENT======= :C")
+                self.state_neg = False
+            elif msg['type'] in ('chat', 'normal'):
+                if int(float(msg['body'])) >= self.resources_needed:
+                    self.send_message(mto=self.resource_agent+'@tlon',msubject='finish',mbody=str(self.resources_needed),mtype='chat')
+                else:
+                    new_resources = (int(float(msg['body'])) + self.resources_needed) / 2
+                    if new_resources >= self.minimum_needed:
+                        self.send_message(mto=self.resource_agent+'@tlon',mbody=str(new_resources),mtype='chat')
+                    else:
+                        self.send_message(mto=self.resource_agent+'@tlon',msubject='last',mbody=str(self.resources_needed),mtype='chat')
 
 '''Resources Agent that will give resources in negotiation'''
 
@@ -244,6 +252,8 @@ class ResourcesAgent(AbstractAgent):
         self.network = None
         self.maximum_avaliable = random.randint(15, 50) #percentage
         self.initial_resource = random.randint(15,self.maximum_avaliable) #percentage
+        self.counter = 0
+        self.state_neg = True
         print("RESOURCES ###### maximum ##### initial",self.maximum_avaliable,self.initial_resource)
 
     def set_network(self,network):
@@ -256,16 +266,25 @@ class ResourcesAgent(AbstractAgent):
         behaviour.join()
 
     def message(self, msg):
-        if msg['subject'] == 'finish' and msg['type'] in ('chat', 'normal'):
-            print("==========NEGOTIATED RESOURCES=======", msg['body'])
-        elif msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
-            if int(msg['body']) > self.maximum_avaliable:
-                print("==========NO AGREEMENT======= :C")
-            else:
+        self.counter += 1
+        if self.state_neg:
+            if self.counter == 10 and int(float(msg['body']))==self.maximum_avaliable-1:
+                self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+            elif msg['subject'] == 'finish' and msg['type'] in ('chat', 'normal'):
                 print("==========NEGOTIATED RESOURCES=======", msg['body'])
-        else:
-            new_resources = (int(float(msg['body'])) + self.maximum_avaliable) / 2
-            if new_resources > self.maximum_avaliable:
-                print("==========NO AGREEMENT======= :C")
+                self.state_neg = False
+            elif msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
+                if int(msg['body']) > self.maximum_avaliable:
+                    self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+                else:
+                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
+                    self.state_neg = False
             else:
-                self.send_message(mto=self.resource_agent+'@tlon',mbody=str(new_resources),mtype='chat')
+                new_resources = (int(float(msg['body'])) + self.maximum_avaliable) / 2
+                if new_resources > self.maximum_avaliable:
+                    self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+                elif new_resources == self.maximum_avaliable:
+                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
+                    self.state_neg = False
+                else:
+                    self.send_message(mto=self.network+'@tlon',mbody=str(int(new_resources)),mtype='chat')
