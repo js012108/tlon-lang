@@ -1,0 +1,4 @@
+importar lib.util.file_manager
+archivo = FileManager("test/test_write.txt")
+archivo.init_file("write")
+log(archivo)

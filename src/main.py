@@ -1,6 +1,22 @@
 from antlr4 import *
 from core import *
 
+from antlr4.error.ErrorListener import ErrorListener
+
+
+class MyErrorListener( ErrorListener ):
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        print(str(line) + ":" + str(column) + ": sintax ERROR, " + str(msg))
+
+    def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
+        print("Ambiguity ERROR, " + str(configs))
+
+    def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
+        print("Attempting full context ERROR, " + str(configs))
+
+    def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
+        print("Context ERROR, " + str(configs))
+
 def main():
 
   print ('----- LangTLON v1.0 -----\n')
@@ -34,15 +50,22 @@ def main():
         print ('... ', end='', flush=True)
         input_data = input_data + sys.stdin.readline()
         tabs = input_data.count('{') + input_data.count('funcion') - input_data.count('}') - input_data.count('end')
-
+      
       input_stream = InputStream(input_data)
 
       lexer = TLONLexer(input_stream)
       token_stream = CommonTokenStream(lexer)
       parser = TLONParser(token_stream)
+      parser._listeners = [ MyErrorListener() ]
       tree = parser.parse()
 
-      result = visitor.visit(tree)
+      result=None
+      try:
+        result = visitor.visit(tree)
+      except Exception as e:
+        if type(e)!= AttributeError:
+          print(e)
+        
 
       if result is not None:
         print (result)
