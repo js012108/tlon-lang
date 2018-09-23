@@ -1,9 +1,11 @@
 # Envia un numero de veces determinado que se deben tomar las mediciones de los sensores y enviarlos al servicio web
 
 importar mas.__init__
+importar time
 
 funcion measureAgent(times)
     agent = MeasurementAgent("this agent with send data to a webservice", "testuser1", "pass123", times)
+    sleep(5)
     agent.start()
 end
 

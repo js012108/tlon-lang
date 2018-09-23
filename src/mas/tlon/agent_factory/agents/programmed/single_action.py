@@ -55,7 +55,8 @@ class MeasurementAgent(AbstractAgent):
 
     def __init__(self, description, jid, password, times, community_id=''):
         AbstractAgent.__init__(self,description, jid, password, community_id)
-        self.behaviour = ExecuteScript("scripts/measure_taker.py")
+        #self.behaviour = ExecuteScript("scripts/measure_taker.py")
+        self.behaviour = ExecuteScript("scripts/measure_taker_dict.py")
         self.times = times
         self.script = "scripts/measure_taker.py"
 
