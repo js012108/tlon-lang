@@ -5,7 +5,7 @@ importar time
 
 funcion measureAgent(times)
     agent = MeasurementAgent("this agent with send data to a webservice", "testuser1", "pass123", times)
-    sleep(5)
+    sleep(10)
     agent.start()
 end
 
