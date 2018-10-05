@@ -16,7 +16,7 @@ veedor.start()
 
 log("######################VOTANTES#####################")
 for voter in voters{
-    log("*****VOTERS_jabber_idddddddd*******")
+    log("**********VOTERS_jabber_id************")
     log(voter.jabber_id)
     voter.set_veedor("testuser2")
     voter.start()
@@ -24,7 +24,7 @@ for voter in voters{
 
 log("######################CANDIDATOS#####################")
 for candidate in candidates{
-    log("*****CANDIDATES_jabber_idddddddd*******")
+    log("**********CANDIDATES_jabber_id************")
     log(candidate.jabber_id)
     candidate.set_voters(voters)
     candidate.start()

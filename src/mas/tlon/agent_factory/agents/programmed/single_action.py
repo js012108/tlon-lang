@@ -111,7 +111,7 @@ class VoterAgent(AbstractAgent):
     def message(self, msg):
         if msg['subject'] == 'election' and msg['type'] in ('chat', 'normal'):
             self._gateway = msg['body']
-            print("==========GATEWAY=======", self._gateway)
+            print("voter_jabber_id", self.jabber_id, "==========GATEWAY=======", self._gateway)
         elif msg['type'] in ('chat', 'normal'):
             self.judgment.append(msg['body'].split('_'))
 
@@ -135,6 +135,7 @@ class CandidateAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
         AbstractAgent.__init__(self,description, jid, password, community_id)
         self.resources = randint(1,10)*10
+        print("Resources", self.resources)
 
     def set_voters(self, voters):
         self.behaviour = CampaignAction(voters,self)
