@@ -9,7 +9,7 @@ comm_candidates = comunidad("{'CandidateAgent':{'2':{'description':'This agent w
 candidates = comm_candidates.create()
 
 #CREANDO VEEDOR-REGISTRADURIA
-veedor = VeedorAgent("This agent will make the veeduria!", "testuser2", "pass123")
+veedor = VeedorAgent("This agent will make the veeduria!", "veedoragent", "pass123")
 veedor.set_voters(voters)
 veedor.set_candidates(candidates)
 veedor.start()
@@ -18,7 +18,8 @@ log("######################VOTANTES#####################")
 for voter in voters{
     log("**********VOTERS_jabber_id************")
     log(voter.jabber_id)
-    voter.set_veedor("testuser2")
+    voter.set_veedor(veedor)
+    voter.set_candidates(candidates)
     voter.start()
 }
 

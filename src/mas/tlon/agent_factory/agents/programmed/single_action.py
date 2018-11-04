@@ -82,7 +82,8 @@ class VoteAction(OneShotBehavior):
 
     def _single_action(self):
         import time
-        time.sleep(10)
+        while len(self.voter.judgment)<len(self.voter.candidates):
+            time.sleep(1)
         decision = 0
         body_vote = ''
         for candidate in self.voter.judgment:
@@ -90,17 +91,22 @@ class VoteAction(OneShotBehavior):
                 decision = int(candidate[1])/int(candidate[2])
                 body_vote = candidate[0]
         self.voter.send_message(mto=self.veedor,mbody=body_vote,mtype='chat')
-        time.sleep(10)
+        while (self.voter._gateway==None):
+            time.sleep(1)
 
 class VoterAgent(AbstractAgent):
 
     def __init__(self, description, jid, password, community_id=''):
         AbstractAgent.__init__(self,description, jid, password, community_id)
         self.judgment = []
+        self.candidates = []
         self._gateway = None
 
     def set_veedor(self,veedor):
-        self.behaviour = VoteAction(veedor,self)
+        self.behaviour = VoteAction(veedor.jabber_id,self)
+    
+    def set_candidates(self, candidates_list):
+        self.candidates = candidates_list
 
     def _setup(self):
         behaviour = self.behaviour
@@ -126,7 +132,6 @@ class CampaignAction(OneShotBehavior):
 
     def _single_action(self):
         import time
-        time.sleep(2)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
             self.candidate.send_message(mto=voter.jabber_id+'@localhost',mbody=body,mtype='chat')
@@ -149,15 +154,17 @@ class CandidateAgent(AbstractAgent):
 '''Veedor agent for elections (Registraduria)'''
 
 class VoteCounterAction(OneShotBehavior):
-    def __init__(self, counter_election,Veedor):
+    def __init__(self,Veedor):
         OneShotBehavior.__init__(self)
-        self.counter_election = counter_election
+        self.counter_election = Veedor.candidates
         self.veedor = Veedor
 
     def _single_action(self):
         import time
-        time.sleep(15)
+        while sum(self.counter_election.values())<len(self.veedor.voters):
+            time.sleep(1)
         gateway = max(self.counter_election,key=self.counter_election.get)
+        print("==========RESULTS=======", self.counter_election)
         for voter in self.veedor.voters:
             self.veedor.send_message(mto=voter+'@localhost',mbody=gateway,msubject='election',mtype='chat')
 
@@ -176,7 +183,7 @@ class VeedorAgent(AbstractAgent):
             self.voters.append(voter.jabber_id)
 
     def _setup(self):
-        behaviour = VoteCounterAction(self.candidates,self)
+        behaviour = VoteCounterAction(self)
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()
