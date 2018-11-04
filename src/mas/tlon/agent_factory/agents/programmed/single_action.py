@@ -84,7 +84,6 @@ class VoteAction(OneShotBehavior):
         import time
         while len(self.voter.judgment)<len(self.voter.candidates):
             time.sleep(1)
-            print('ciclo voter', self.voter.judgment)
         decision = 0
         body_vote = ''
         for candidate in self.voter.judgment:
@@ -121,7 +120,6 @@ class VoterAgent(AbstractAgent):
             print("voter_jabber_id", self.jabber_id, "==========GATEWAY=======", self._gateway)
         elif msg['type'] in ('chat', 'normal'):
             self.judgment.append(msg['body'].split('_'))
-            print('ADDDDIIIIIIIIIIINGGGGGGGGGGGGGGGGG')
 
 '''Candidate agent'''
 
@@ -134,10 +132,9 @@ class CampaignAction(OneShotBehavior):
 
     def _single_action(self):
         import time
-        time.sleep(10)
+        time.sleep(8)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
-            print("BODYYYYYYYYYYYYYYYYYYYYYYYYY",body)
             self.candidate.send_message(mto=voter.jabber_id+'@localhost',mbody=body,mtype='chat')
 
 class CandidateAgent(AbstractAgent):
@@ -167,7 +164,6 @@ class VoteCounterAction(OneShotBehavior):
         import time
         while sum(self.counter_election.values())<len(self.veedor.voters):
             time.sleep(1)
-            print('ciclo veedor',self.counter_election)
         gateway = max(self.counter_election,key=self.counter_election.get)
         print("==========RESULTS=======", self.counter_election)
         for voter in self.veedor.voters:
