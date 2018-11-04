@@ -84,6 +84,7 @@ class VoteAction(OneShotBehavior):
         import time
         while len(self.voter.judgment)<len(self.voter.candidates):
             time.sleep(1)
+            print('ciclo voter')
         decision = 0
         body_vote = ''
         for candidate in self.voter.judgment:
@@ -164,6 +165,7 @@ class VoteCounterAction(OneShotBehavior):
         import time
         while sum(self.counter_election.values())<len(self.veedor.voters):
             time.sleep(1)
+            print('ciclo veedor')
         gateway = max(self.counter_election,key=self.counter_election.get)
         print("==========RESULTS=======", self.counter_election)
         for voter in self.veedor.voters:
