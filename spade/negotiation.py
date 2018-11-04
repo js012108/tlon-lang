@@ -11,6 +11,7 @@ class ResourcesAgent(Agent):
         async def run(self):
             # msg.set_metadata("hey", "inform")
             if self.counter ==0:
+                import time.sleep(10)
                 msg = Message(to="testuser2@localhost")  # Instantiate the message
                 msg.body = str(self.initial_resource)
                 msg.set_metadata("subject", "continue")
