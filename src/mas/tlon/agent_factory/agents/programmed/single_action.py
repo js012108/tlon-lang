@@ -121,6 +121,7 @@ class VoterAgent(AbstractAgent):
             print("voter_jabber_id", self.jabber_id, "==========GATEWAY=======", self._gateway)
         elif msg['type'] in ('chat', 'normal'):
             self.judgment.append(msg['body'].split('_'))
+            print('ADDDDIIIIIIIIIIINGGGGGGGGGGGGGGGGG')
 
 '''Candidate agent'''
 
