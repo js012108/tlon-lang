@@ -59,7 +59,7 @@ class CandidateAgent(Agent):
             self.jabid = jid
         
         async def run(self):
-            time.sleep(2)
+            time.sleep(10)
             for voter in self.voters:
                 body = str(self.jabid) + '_' + str(self.resources) + '_' + str(randint(1,10))
                 msg = Message(to=voter)  # Instantiate the message
