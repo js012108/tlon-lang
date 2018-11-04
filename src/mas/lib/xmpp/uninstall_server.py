@@ -1,10 +1,7 @@
 import os
 
-#********Uninstall ejabberd 18.01 server**********
+#********Uninstall prosody server**********
 comando1 = '''
-sudo apt-get remove --purge ejabberd
-cd /opt/
-sudo rm -rf ejabberd/
-sudo rm -rf ejabberd-18.01/
+sudo apt-get purge --auto-remove prosody
 '''
 os.system(comando1)

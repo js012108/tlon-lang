@@ -68,10 +68,7 @@ class Environment(object, metaclass=Singleton):
         # self.cs = ControlSpace("TLÖN_WORLD_ControlSpace_UUID", self.get_instance())
 
         #START XMPP SERVER.
-        try:
-            os.system("cd /opt/ejabberd-18.01/bin \n sudo ./ejabberdctl start > /dev/null&")
-        except:
-            os.system("sudo ejabberdctl start > /dev/null&")
+        os.system("sudo prosodyctl start > /dev/null&")
         logging.info('XMPP Server UP!')
 
         if not self._running:

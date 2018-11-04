@@ -35,16 +35,9 @@ class AbstractAgent(multiprocessing.Process, ClientXMPP):
         #XMPP Client
         self.jabberid = jid
         #register in xmpp server
-        command = '''
-        cd /opt/ejabberd-18.01/bin
-        sudo ./ejabberdctl register '''+jid+' tlon '+password+' > /dev/null'
-        if os.system(command)!=0:
-            command = '''
-            sudo ejabberdctl register '''+jid+' tlon '+password+' > /dev/null'
-            if os.system(command)!=0:
-                pass
+        os.system('sudo prosodyctl register '''+jid+' localhost '+password+' > /dev/null')
         logging.info("User '"+jid+"' in XMPP server")
-        ClientXMPP.__init__(self, jid+'@tlon', password)
+        ClientXMPP.__init__(self, jid+'@localhost', password)
         logging.basicConfig(level=logging.DEBUG,format='%(levelname)-8s %(message)s')
         self.add_event_handler("session_start", self.session_start)
         self.add_event_handler("message", self.message)
