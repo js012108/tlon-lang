@@ -134,7 +134,7 @@ class CampaignAction(OneShotBehavior):
 
     def _single_action(self):
         import time
-        time.sleep(5)
+        time.sleep(10)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
             print("BODYYYYYYYYYYYYYYYYYYYYYYYYY",body)
