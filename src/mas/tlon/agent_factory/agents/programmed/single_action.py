@@ -136,6 +136,7 @@ class CampaignAction(OneShotBehavior):
         time.sleep(5)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
+            print("BODYYYYYYYYYYYYYYYYYYYYYYYYY",body)
             self.candidate.send_message(mto=voter.jabber_id+'@localhost',mbody=body,mtype='chat')
 
 class CandidateAgent(AbstractAgent):
