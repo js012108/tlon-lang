@@ -77,7 +77,7 @@ class MeasurementAgent(AbstractAgent):
 class VoteAction(OneShotBehavior):
     def __init__(self, veedor, Voter):
         OneShotBehavior.__init__(self)
-        self.veedor = veedor + "@tlon"
+        self.veedor = veedor + "@localhost"
         self.voter = Voter
 
     def _single_action(self):
@@ -129,7 +129,7 @@ class CampaignAction(OneShotBehavior):
         time.sleep(2)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
-            self.candidate.send_message(mto=voter.jabber_id+'@tlon',mbody=body,mtype='chat')
+            self.candidate.send_message(mto=voter.jabber_id+'@localhost',mbody=body,mtype='chat')
 
 class CandidateAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
@@ -159,7 +159,7 @@ class VoteCounterAction(OneShotBehavior):
         time.sleep(15)
         gateway = max(self.counter_election,key=self.counter_election.get)
         for voter in self.veedor.voters:
-            self.veedor.send_message(mto=voter+'@tlon',mbody=gateway,msubject='election',mtype='chat')
+            self.veedor.send_message(mto=voter+'@localhost',mbody=gateway,msubject='election',mtype='chat')
 
 class VeedorAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
@@ -190,12 +190,14 @@ class VeedorAgent(AbstractAgent):
 
 import random
 class NetworkAction(OneShotBehavior):
-    def __init__(self):
+    def __init__(self,NetworkAgent):
         OneShotBehavior.__init__(self)
+        self.network_agent = NetworkAgent
 
     def _single_action(self):
         import time
-        time.sleep(10)
+        while (self.network_agent.state_neg):
+            time.sleep(1)
 
 class NetworkAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
@@ -210,28 +212,29 @@ class NetworkAgent(AbstractAgent):
         self.resource_agent = resource_agent.jabber_id
 
     def _setup(self):
-        behaviour = NetworkAction()
+        behaviour = NetworkAction(self)
         self.add_behaviour(behaviour)
         behaviour.start()
         behaviour.join()
 
     def message(self, msg):
-        if self.state_neg:
-            if msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
-                if int(float(msg['body'])) <= self.resources_needed and int(float(msg['body'])) >=self.minimum_needed:
-                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
-                else:
-                    print("==========NO AGREEMENT======= :C")
+        if msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
+            if int(float(msg['body'])) <= self.resources_needed and int(float(msg['body'])) >=self.minimum_needed:
+                print("==========NEGOTIATED RESOURCES=======", msg['body'])
+            else:
+                print("==========NO AGREEMENT======= :C")
+            self.state_neg = False
+        elif msg['type'] in ('chat', 'normal'):
+            if int(float(msg['body'])) >= self.resources_needed:
+                self.send_message(mto=self.resource_agent+'@localhost',msubject='finish',mbody=str(self.resources_needed),mtype='chat')
                 self.state_neg = False
-            elif msg['type'] in ('chat', 'normal'):
-                if int(float(msg['body'])) >= self.resources_needed:
-                    self.send_message(mto=self.resource_agent+'@tlon',msubject='finish',mbody=str(self.resources_needed),mtype='chat')
+            else:
+                new_resources = (int(float(msg['body'])) + self.resources_needed) / 2
+                if new_resources >= self.minimum_needed:
+                    self.send_message(mto=self.resource_agent+'@localhost',mbody=str(new_resources),mtype='chat')
                 else:
-                    new_resources = (int(float(msg['body'])) + self.resources_needed) / 2
-                    if new_resources >= self.minimum_needed:
-                        self.send_message(mto=self.resource_agent+'@tlon',mbody=str(new_resources),mtype='chat')
-                    else:
-                        self.send_message(mto=self.resource_agent+'@tlon',msubject='last',mbody=str(self.resources_needed),mtype='chat')
+                    self.send_message(mto=self.resource_agent+'@localhost',msubject='last',mbody=str(self.resources_needed),mtype='chat')
+                    self.state_neg = False
 
 '''Resources Agent that will give resources in negotiation'''
 
@@ -244,9 +247,10 @@ class ResourcesAction(OneShotBehavior):
     def _single_action(self):
         network = self.resource_agent.network
         resources = str(self.resource_agent.initial_resource)
-        self.resource_agent.send_message(mto=network+'@tlon',mbody=resources,mtype='chat')
+        self.resource_agent.send_message(mto=network+'@localhost',mbody=resources,mtype='chat')
         import time
-        time.sleep(10)
+        while (self.resource_agent.state_neg):
+            time.sleep(1)
 
 class ResourcesAgent(AbstractAgent):
     def __init__(self, description, jid, password, community_id=''):
@@ -269,24 +273,25 @@ class ResourcesAgent(AbstractAgent):
 
     def message(self, msg):
         self.counter += 1
-        if self.state_neg:
-            if self.counter == 10 and int(float(msg['body']))==self.maximum_avaliable-1:
-                self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
-            elif msg['subject'] == 'finish' and msg['type'] in ('chat', 'normal'):
+        if self.counter == 10 and int(float(msg['body']))==self.maximum_avaliable-1:
+            self.send_message(mto=self.network+'@localhost',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+            self.state_neg = False
+        elif msg['subject'] == 'finish' and msg['type'] in ('chat', 'normal'):
+            print("==========NEGOTIATED RESOURCES=======", msg['body'])
+            self.state_neg = False
+        elif msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
+            if int(msg['body']) > self.maximum_avaliable:
+                self.send_message(mto=self.network+'@localhost',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+            else:
+                print("==========NEGOTIATED RESOURCES=======", msg['body'])
+            self.state_neg = False
+        else:
+            new_resources = (int(float(msg['body'])) + self.maximum_avaliable) / 2
+            if new_resources > self.maximum_avaliable:
+                self.send_message(mto=self.network+'@localhost',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
+                self.state_neg = False
+            elif new_resources == self.maximum_avaliable:
                 print("==========NEGOTIATED RESOURCES=======", msg['body'])
                 self.state_neg = False
-            elif msg['subject'] == 'last' and msg['type'] in ('chat', 'normal'):
-                if int(msg['body']) > self.maximum_avaliable:
-                    self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
-                else:
-                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
-                    self.state_neg = False
             else:
-                new_resources = (int(float(msg['body'])) + self.maximum_avaliable) / 2
-                if new_resources > self.maximum_avaliable:
-                    self.send_message(mto=self.network+'@tlon',msubject='last',mbody=str(self.maximum_avaliable),mtype='chat')
-                elif new_resources == self.maximum_avaliable:
-                    print("==========NEGOTIATED RESOURCES=======", msg['body'])
-                    self.state_neg = False
-                else:
-                    self.send_message(mto=self.network+'@tlon',mbody=str(int(new_resources)),mtype='chat')
+                self.send_message(mto=self.network+'@localhost',mbody=str(int(new_resources)),mtype='chat')
