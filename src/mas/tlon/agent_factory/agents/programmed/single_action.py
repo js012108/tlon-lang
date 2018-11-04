@@ -84,7 +84,7 @@ class VoteAction(OneShotBehavior):
         import time
         while len(self.voter.judgment)<len(self.voter.candidates):
             time.sleep(1)
-            print('ciclo voter')
+            print('ciclo voter', self.voter.judgment)
         decision = 0
         body_vote = ''
         for candidate in self.voter.judgment:
@@ -133,7 +133,7 @@ class CampaignAction(OneShotBehavior):
 
     def _single_action(self):
         import time
-        time.sleep(3)
+        time.sleep(5)
         for voter in self.voters:
             body = str(self.candidate.jabber_id) + '_' + str(self.candidate.resources) + '_' + str(randint(1,10))
             self.candidate.send_message(mto=voter.jabber_id+'@localhost',mbody=body,mtype='chat')
@@ -165,7 +165,7 @@ class VoteCounterAction(OneShotBehavior):
         import time
         while sum(self.counter_election.values())<len(self.veedor.voters):
             time.sleep(1)
-            print('ciclo veedor')
+            print('ciclo veedor',self.counter_election)
         gateway = max(self.counter_election,key=self.counter_election.get)
         print("==========RESULTS=======", self.counter_election)
         for voter in self.veedor.voters:
