@@ -239,7 +239,7 @@ class NetworkAgent(AbstractAgent):
             else:
                 new_resources = (int(float(msg['body'])) + self.resources_needed) / 2
                 if new_resources >= self.minimum_needed:
-                    self.send_message(mto=self.resource_agent+'@localhost',mbody=str(new_resources),mtype='chat')
+                    self.send_message(mto=self.resource_agent+'@localhost',mbody=str(int(new_resources)),mtype='chat')
                 else:
                     self.send_message(mto=self.resource_agent+'@localhost',msubject='last',mbody=str(self.resources_needed),mtype='chat')
                     self.state_neg = False
